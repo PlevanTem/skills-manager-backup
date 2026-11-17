@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "ac4f7fa7-cbcb-4178-b117-49e668b01b9f",
+  "path": "launch-readiness",
+  "path_key": "launch-readiness",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

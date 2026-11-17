@@ -1,0 +1,231 @@
+# 三元组格式与输出格式定义
+
+> 被 SKILL.md Stage 2/3 引用
+>
+> **主输出为 YAML**（机器可读），MD 为衍生格式（人类可读）。
+> 所有脚本（kg_to_html.py、kg_validate.py）优先读取 YAML 文件。
+
+---
+
+## 标准三元组格式
+
+```yaml
+triple:
+  id: "T_001"
+  head:
+    entity_id: "E_TRADE_ORDER"
+    entity_name: "交易订单"
+  relation:
+    type: "聚合"
+    description: "交易订单聚合交易受益单"
+    cardinality: "1:*"
+  tail:
+    entity_id: "E_TRADE_BENEFIT_ORDER"
+    entity_name: "交易受益单"
+  metadata:
+    source: "34-交易领域模型.md"
+    confidence: 0.99
+    domain: "C2B交易域"
+```
+
+---
+
+## 实体主输出格式 (kg-entities.yaml)
+
+YAML 为主格式，脚本和后续流程直接消费此文件。
+
+```yaml
+entities:
+  - id: "E_TRADE_ORDER"
+    name: "交易订单"
+    name_en: "TradeOrder"
+    type: "聚合根"
+    domain: "C2B交易域"
+    description: "交易的聚合根，统领受益单、支付单、商品单、场景单"
+    aliases: ["交易单", "支付订单"]
+    source: "34-交易领域模型.md"
+    properties:
+      - {key: "微信支付交易订单号", type: "string", required: true}
+      - {key: "商户订单号", type: "string", required: true}
+    community: "交易核心社区"
+    confidence: 0.99
+```
+
+## 实体衍生格式 (kg-entities.md)
+
+从 `kg-entities.yaml` 渲染生成，按业务域分组的 Markdown 表格，方便人类阅读审查。
+
+```markdown
+## C2B交易域（15）
+
+| ID | name | type | description | source |
+|----|------|------|-------------|--------|
+| E_TRADE_ORDER | 交易订单 | 聚合根 | 交易的聚合根，统领受益单、支付单... | 34-交易领域模型.md |
+```
+
+---
+
+## 同义概念归类格式 (kg-synonym-groups)
+
+每个已合并的概念组一行，列出保留名称和所有被归并的同义名称，供用户审查。
+
+```markdown
+# 同义概念归类清单
+
+> 以下实体存在多个同义名称，已归类为同一概念。请审查是否合并正确。
+> 标记 ✅ 表示已确认，❓ 表示待确认。
+
+| 保留实体ID | 保留名称 | 同义名称 | 来源 | 状态 |
+|-----------|---------|---------|------|------|
+| E_TRADE_ORDER | 单位支付交易订单 | 交易定单, 微信支付订单 | 34-交易领域模型.md, 名词列表 | ❓ |
+| E_MERCHANT | 普通商户 | 商家, 收款方, 直连商户 | 名词库, 参与方文档 | ❓ |
+| E_REFUND_ORDER | 退款单 | 退款订单, 商业退款单 | 退款领域模型.md, 名词列表 | ❓ |
+```
+
+生成规则：
+- 仅列出存在 ≥2 个名称的实体（只有一个名称的不列出）
+- `同义名称` 包含：实体的 aliases 字段、从不同知识源提取时的不同命名、代码中的英文名
+- `来源` 标注每个同义名称的出处
+- `状态` 默认 ❓，用户确认后改为 ✅
+
+---
+
+## 关系主输出格式 (kg-relations.yaml)
+
+```yaml
+relations:
+  - id: "R_001"
+    head: "E_TRADE_ORDER"
+    relation_type: "聚合"
+    tail: "E_TRADE_BENEFIT_ORDER"
+    description: "交易订单聚合交易受益单，一个交易订单可有多个受益单"
+    cardinality: "1:*"
+    source: "34-交易领域模型.md"
+    confidence: 0.99
+    domain: "C2B交易域"
+```
+
+## 关系衍生格式 (kg-relations.md)
+
+从 `kg-relations.yaml` 渲染生成。
+
+```markdown
+## C2B交易域（30 条）
+
+| head_id | head_name | type | tail_id | tail_name | description | source |
+|---------|-----------|------|---------|-----------|-------------|--------|
+| E_TRADE_ORDER | 交易订单 | 聚合 | E_TRADE_BENEFIT_ORDER | 交易受益单 | 交易订单聚合交易受益单 | 34-交易领域模型.md |
+```
+
+---
+
+## 规则主输出格式 (kg-rules.yaml)
+
+```yaml
+rules:
+  - id: "RULE_001"
+    name: "退款金额上限约束"
+    type: "业务约束"          # 业务约束 | 状态机规则 | 权限规则 | 数据校验
+    description: "退款金额不能超过原交易订单的实付金额"
+    involvedEntities: ["E_REFUND_ORDER", "E_TRADE_ORDER"]
+    condition: "退款金额 > 原订单实付金额"
+    action: "拒绝退款申请，返回错误码 REFUND_AMOUNT_EXCEED"
+    exception: "特殊商户可通过审批突破限额"
+    codeLocation: "refund_service.cpp:ValidateRefundAmount()"
+    priority: "P0"
+    source: "退款领域用例-受理退款.md"
+```
+
+## 规则衍生格式 (kg-rules.md)
+
+从 `kg-rules.yaml` 渲染生成，按类型分组的 Markdown 表格。
+
+```markdown
+## 业务约束（5 条）
+
+| ID | name | involvedEntities | condition | action | source |
+|----|------|------------------|-----------|--------|--------|
+| RULE_001 | 退款金额上限约束 | 退款单, 交易订单 | 退款金额 > 原订单实付金额 | 拒绝退款申请 | 退款领域用例.md |
+```
+
+---
+
+## 流程主输出格式 (kg-flows.yaml)
+
+```yaml
+flows:
+  - id: "FLOW_001"
+    name: "受理单笔退款"
+    description: "商户发起退款请求到退款单创建完成的主流程"
+    triggerCondition: "商户通过 API 提交退款请求"
+    involvedEntities: ["E_REFUND_ORDER", "E_TRADE_ORDER", "E_MERCHANT"]
+    steps:
+      - order: 1
+        actor: "商户"
+        action: "提交退款请求"
+        entityRef: "E_MERCHANT"
+        ruleRef: ""
+        codeEntry: "refund_api.cpp:SubmitRefund()"
+        output: "退款请求报文"
+      - order: 2
+        actor: "退款系统"
+        action: "校验退款金额"
+        entityRef: "E_REFUND_ORDER"
+        ruleRef: "RULE_001"
+        codeEntry: "refund_service.cpp:ValidateRefundAmount()"
+        output: "校验结果"
+    happyPath: "请求 → 校验 → 创建退款单 → 返回成功"
+    errorScenarios:
+      - "退款金额超限 → 返回 REFUND_AMOUNT_EXCEED"
+      - "原订单不存在 → 返回 ORDER_NOT_FOUND"
+```
+
+## 流程衍生格式 (kg-flows.md)
+
+从 `kg-flows.yaml` 渲染生成，每个流程一个小节。
+
+```markdown
+## FLOW_001 受理单笔退款
+
+**触发条件**: 商户通过 API 提交退款请求
+**涉及实体**: 退款单, 交易订单, 商户
+
+| 步骤 | 参与者 | 动作 | 关联实体 | 关联规则 | 输出 |
+|------|--------|------|---------|---------|------|
+| 1 | 商户 | 提交退款请求 | E_MERCHANT | — | 退款请求报文 |
+| 2 | 退款系统 | 校验退款金额 | E_REFUND_ORDER | RULE_001 | 校验结果 |
+
+**Happy Path**: 请求 → 校验 → 创建退款单 → 返回成功
+**异常场景**: 退款金额超限; 原订单不存在
+```
+
+---
+
+## 术语表主输出格式 (kg-glossary.yaml)
+
+```yaml
+glossary:
+  - term: "交易订单"
+    definition: "一次微信支付交易的聚合根，统领受益单、支付单、商品单、场景单"
+    entityRef: "E_TRADE_ORDER"
+    fieldRef: ""
+    source: "34-交易领域模型.md"
+  - term: "TradeOrder"
+    definition: "交易订单的英文名"
+    entityRef: "E_TRADE_ORDER"
+    fieldRef: "name_en"
+    source: "自动生成"
+```
+
+## 术语表衍生格式 (kg-glossary.md)
+
+从 `kg-glossary.yaml` 渲染生成，按首字母/拼音排序的术语表。
+
+```markdown
+# 术语表
+
+| 术语 | 定义 | 关联实体 | 关联字段 | 来源 |
+|------|------|---------|---------|------|
+| TradeOrder | 交易订单的英文名 | E_TRADE_ORDER | name_en | 自动生成 |
+| 交易订单 | 一次微信支付交易的聚合根... | E_TRADE_ORDER | — | 34-交易领域模型.md |
+```

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "dba371ff-bc79-41c0-bc73-23530ee28bd5",
+  "path": "improve-retention",
+  "path_key": "improve-retention",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

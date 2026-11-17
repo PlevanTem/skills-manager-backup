@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b689eabb-cb08-46e9-b814-79b492c2913f",
+  "path": "lark-attendance",
+  "path_key": "lark-attendance",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

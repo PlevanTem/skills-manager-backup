@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "0487891f-bc4c-42d7-a8bd-e315ae9e9c04",
+  "path": "outcome-roadmap",
+  "path_key": "outcome-roadmap",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

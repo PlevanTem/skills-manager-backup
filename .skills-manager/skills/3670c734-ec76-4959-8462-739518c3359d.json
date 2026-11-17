@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "3670c734-ec76-4959-8462-739518c3359d",
+  "path": "ai-evals",
+  "path_key": "ai-evals",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

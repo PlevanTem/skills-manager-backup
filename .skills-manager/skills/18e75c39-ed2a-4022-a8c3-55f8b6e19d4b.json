@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "18e75c39-ed2a-4022-a8c3-55f8b6e19d4b",
+  "path": "cost-model",
+  "path_key": "cost-model",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

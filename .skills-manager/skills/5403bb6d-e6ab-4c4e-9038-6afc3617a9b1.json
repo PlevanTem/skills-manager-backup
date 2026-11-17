@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5403bb6d-e6ab-4c4e-9038-6afc3617a9b1",
+  "path": "contagious",
+  "path_key": "contagious",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

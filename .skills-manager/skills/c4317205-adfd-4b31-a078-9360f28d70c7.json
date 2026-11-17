@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "c4317205-adfd-4b31-a078-9360f28d70c7",
+  "path": "continuous-discovery",
+  "path_key": "continuous-discovery",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

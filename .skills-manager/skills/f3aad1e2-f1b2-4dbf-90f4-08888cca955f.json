@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "f3aad1e2-f1b2-4dbf-90f4-08888cca955f",
+  "path": "pr-authoring",
+  "path_key": "pr-authoring",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

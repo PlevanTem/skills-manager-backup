@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "66e547a2-8d01-47f3-a219-53455970fcb1",
+  "path": "tdesign-d2c",
+  "path_key": "tdesign-d2c",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

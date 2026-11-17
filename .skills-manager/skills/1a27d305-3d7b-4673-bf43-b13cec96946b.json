@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "1a27d305-3d7b-4673-bf43-b13cec96946b",
+  "path": "swot-analysis",
+  "path_key": "swot-analysis",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

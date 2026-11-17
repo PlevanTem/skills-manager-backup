@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "999977a7-0d6a-4136-af1c-4ba17d42f543",
+  "path": "us-fintech",
+  "path_key": "us-fintech",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

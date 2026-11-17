@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b8edc5e9-677a-447e-9e47-d0b11fc2708d",
+  "path": "pricing-models",
+  "path_key": "pricing-models",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

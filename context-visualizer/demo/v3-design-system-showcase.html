@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Context Visualizer v3 — 设计系统改造总结</title>
+  <style>
+/* === Theme: default-light === */
+:root {
+  --bg: #f6f8fb;
+  --bg-soft: #eef3f8;
+  --panel: #ffffff;
+  --panel-soft: #f7f9fc;
+  --line: #d7dfeb;
+  --text: #162033;
+  --muted: #61738f;
+  --accent: #2563eb;
+  --accent-soft: #e8f0ff;
+  --success: #0f9f6e;
+  --warning: #b7791f;
+  --danger: #dc2626;
+  --neutral: #64748b;
+  --max: 1180px;
+  --radius: 20px;
+  --shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  background:
+    radial-gradient(circle at top, rgba(37, 99, 235, 0.08), transparent 28%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+.cv-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid var(--line);
+}
+.cv-topbar-inner, .cv-page, .cv-footer {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.cv-topbar-inner {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.cv-brand {
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.cv-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.cv-nav::-webkit-scrollbar { display: none; }
+.cv-nav a {
+  white-space: nowrap;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--muted);
+  border: 1px solid transparent;
+}
+.cv-nav a:hover {
+  color: var(--text);
+  border-color: rgba(37, 99, 235, 0.14);
+  background: var(--accent-soft);
+}
+.cv-page { padding-top: 42px; padding-bottom: 40px; }
+.cv-footer {
+  padding-top: 10px;
+  padding-bottom: 56px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.cv-footer-card {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+@media (max-width: 920px) {
+  .cv-topbar-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+}
+
+/* === Components === */
+.cv-hero-card, .cv-section, .cv-meta-card, .cv-summary-box { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.cv-hero-card { padding: 34px 32px; position: relative; overflow: hidden; }
+.cv-hero-card::after { content: ""; position: absolute; right: -56px; bottom: -86px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(37, 99, 235, 0.12), transparent 68%); pointer-events: none; }
+.cv-badge { display: inline-flex; align-items: center; padding: 7px 14px; border-radius: 999px; background: var(--accent-soft); border: 1px solid rgba(37, 99, 235, 0.14); color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.cv-kicker { margin-top: 14px; color: var(--accent); font-size: 13px; font-weight: 700; letter-spacing: 0.03em; }
+.cv-title { margin: 18px 0 12px; font-size: clamp(34px, 5vw, 54px); line-height: 1.1; letter-spacing: -0.03em; }
+.cv-subtitle { color: var(--muted); font-size: 18px; margin: 0 0 16px; }
+.cv-summary-box { padding: 16px 18px; background: var(--panel-soft); margin-top: 16px; }
+.cv-summary-box ul { margin: 0; padding-left: 18px; }
+.cv-summary-box li + li { margin-top: 8px; }
+.cv-meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.cv-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-soft); color: var(--muted); font-size: 12px; font-weight: 700; }
+
+.cv-content { display: grid; gap: 22px; margin-top: 24px; }
+.cv-section { padding: 26px 24px; }
+.cv-section-head { margin-bottom: 16px; }
+.cv-section-head h2 { margin: 0 0 6px; font-size: 24px; }
+.cv-section-head p { margin: 0; color: var(--muted); font-size: 14px; }
+.cv-section-body p { margin: 0 0 12px; }
+.cv-section-body a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed rgba(37, 99, 235, 0.35); }
+.cv-section-body a:hover { border-bottom-style: solid; }
+.cv-section-body code { padding: 2px 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); font-size: 0.92em; }
+.cv-section-body ul { margin: 0; padding-left: 18px; }
+.cv-section-body li + li { margin-top: 8px; }
+
+/* Callout */
+.cv-callout { margin: 16px 0; padding: 14px 18px; border-radius: 16px; border: 1px solid rgba(37, 99, 235, 0.14); background: var(--accent-soft); color: var(--text); line-height: 1.6; }
+.cv-callout-title { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+.cv-callout-info { border-color: rgba(37, 99, 235, 0.14); background: var(--accent-soft); }
+.cv-callout-info .cv-callout-title { color: var(--accent); }
+.cv-callout-success { border-color: rgba(15, 159, 110, 0.2); background: rgba(15, 159, 110, 0.08); }
+.cv-callout-success .cv-callout-title { color: var(--success); }
+.cv-callout-warning { border-color: rgba(183, 121, 31, 0.2); background: rgba(183, 121, 31, 0.08); }
+.cv-callout-warning .cv-callout-title { color: var(--warning); }
+.cv-callout-danger { border-color: rgba(220, 38, 38, 0.2); background: rgba(220, 38, 38, 0.08); }
+.cv-callout-danger .cv-callout-title { color: var(--danger); }
+
+/* Code Block */
+.cv-code-block { margin: 16px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: var(--panel-soft); }
+.cv-code-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); font-size: 12px; font-weight: 700; color: var(--muted); }
+.cv-code-lang { text-transform: uppercase; letter-spacing: 0.05em; }
+.cv-code-filename { color: var(--text); font-weight: 600; }
+.cv-code-block pre { margin: 0; padding: 16px 18px; overflow-x: auto; font-family: "SF Mono", "Fira Code", "JetBrains Mono", monospace; font-size: 13px; line-height: 1.6; color: var(--text); tab-size: 4; }
+.cv-code-block code { background: none; border: none; padding: 0; font-size: inherit; }
+.cv-code-block .cv-hl-keyword { color: var(--accent); font-weight: 600; }
+.cv-code-block .cv-hl-string { color: var(--success); }
+.cv-code-block .cv-hl-comment { color: var(--muted); font-style: italic; }
+.cv-code-block .cv-hl-number { color: var(--warning); }
+.cv-code-block .cv-hl-function { color: #8b5cf6; }
+
+/* Table */
+.cv-table-wrap { margin: 16px 0; overflow-x: auto; border-radius: 16px; border: 1px solid var(--line); background: var(--panel); box-shadow: var(--shadow); }
+.cv-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.cv-table thead { background: var(--panel-soft); border-bottom: 2px solid var(--line); }
+.cv-table th { padding: 12px 16px; text-align: left; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; }
+.cv-table td { padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--text); vertical-align: top; }
+.cv-table tbody tr:last-child td { border-bottom: none; }
+.cv-table tbody tr:hover { background: var(--panel-soft); }
+
+/* Timeline */
+.cv-timeline { margin: 20px 0; padding-left: 28px; position: relative; }
+.cv-timeline::before { content: ""; position: absolute; left: 11px; top: 6px; bottom: 6px; width: 2px; background: var(--line); border-radius: 1px; }
+.cv-timeline-item { position: relative; padding: 0 0 24px 20px; }
+.cv-timeline-item:last-child { padding-bottom: 0; }
+.cv-timeline-dot { position: absolute; left: -22px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 2px var(--accent); }
+.cv-timeline-dot-success { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+.cv-timeline-dot-warning { background: var(--warning); box-shadow: 0 0 0 2px var(--warning); }
+.cv-timeline-dot-danger { background: var(--danger); box-shadow: 0 0 0 2px var(--danger); }
+.cv-timeline-time { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; }
+.cv-timeline-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.cv-timeline-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+.cv-timeline-card { margin-top: 8px; padding: 12px 14px; border-radius: 12px; background: var(--panel-soft); border: 1px solid var(--line); font-size: 13px; }
+
+/* Mermaid */
+.cv-mermaid { margin: 20px 0; padding: 24px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); text-align: center; overflow-x: auto; }
+.cv-mermaid-title { font-size: 13px; font-weight: 800; color: var(--accent); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 16px; text-align: left; }
+.cv-mermaid .mermaid { display: inline-block; text-align: left; }
+
+/* Flow Diagram (pure CSS) */
+.cv-flow-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 700px) { .cv-flow-compare { grid-template-columns: 1fr; } }
+.cv-flow-lane { padding: 20px; border-radius: 14px; background: var(--panel-soft); border: 1px solid var(--line); }
+.cv-flow-lane-title { font-size: 14px; font-weight: 800; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+.cv-flow-lane-old .cv-flow-lane-title { color: var(--danger); }
+.cv-flow-lane-new .cv-flow-lane-title { color: var(--success); }
+.cv-flow-steps { display: flex; flex-direction: column; gap: 0; }
+.cv-flow-node { padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; text-align: center; background: var(--panel); border: 1.5px solid var(--line); color: var(--text); position: relative; }
+.cv-flow-node-bad { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+.cv-flow-node-good { background: #d1fae5; border-color: #0f9f6e; color: #064e3b; }
+.cv-flow-arrow { text-align: center; color: var(--muted); font-size: 18px; line-height: 1; padding: 4px 0; }
+.cv-flow-arrow::after { content: "↓"; }
+
+/* Metrics */
+.cv-metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 20px 0; }
+.cv-metric-card { padding: 20px; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); text-align: center; }
+.cv-metric-value { font-size: clamp(28px, 4vw, 42px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; color: var(--accent); }
+.cv-metric-value-success { color: var(--success); }
+.cv-metric-value-warning { color: var(--warning); }
+.cv-metric-value-danger { color: var(--danger); }
+.cv-metric-label { margin-top: 6px; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.cv-metric-sub { margin-top: 4px; font-size: 12px; color: var(--muted); }
+
+/* Comparison */
+.cv-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.cv-comparison-col { padding: 20px; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.cv-comparison-header { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+.cv-comparison-before .cv-comparison-header { color: var(--danger); border-color: var(--danger); }
+.cv-comparison-after .cv-comparison-header { color: var(--success); border-color: var(--success); }
+.cv-comparison-col ul { margin: 0; padding-left: 18px; }
+.cv-comparison-col li + li { margin-top: 8px; }
+.cv-comparison-col li { color: var(--text); font-size: 14px; }
+
+/* Steps */
+.cv-steps { margin: 20px 0; }
+.cv-step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.cv-step:last-child { border-bottom: none; }
+.cv-step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+.cv-step-num-done { background: var(--success); }
+.cv-step-num-pending { background: var(--muted); }
+.cv-step-content { flex: 1; min-width: 0; }
+.cv-step-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.cv-step-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* Progress */
+.cv-progress-bar { margin: 12px 0; height: 8px; background: var(--panel-soft); border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+.cv-progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.6s ease; }
+.cv-progress-fill-success { background: var(--success); }
+
+/* Tags */
+.cv-tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.cv-tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid var(--line); background: var(--panel-soft); color: var(--muted); }
+.cv-tag-accent { color: var(--accent); border-color: rgba(37, 99, 235, 0.2); background: var(--accent-soft); }
+.cv-tag-success { color: var(--success); border-color: rgba(15, 159, 110, 0.2); background: rgba(15, 159, 110, 0.08); }
+.cv-tag-warning { color: var(--warning); border-color: rgba(183, 121, 31, 0.2); background: rgba(183, 121, 31, 0.08); }
+.cv-tag-danger { color: var(--danger); border-color: rgba(220, 38, 38, 0.2); background: rgba(220, 38, 38, 0.08); }
+
+/* Quote */
+.cv-quote { margin: 14px 0; padding: 14px 16px; border-left: 4px solid var(--accent); background: var(--panel-soft); border-radius: 14px; color: var(--muted); }
+
+/* Responsive */
+@media (max-width: 920px) {
+  .cv-comparison { grid-template-columns: 1fr; }
+  .cv-metric-row { grid-template-columns: repeat(2, 1fr); }
+}
+  </style>
+</head>
+<body class="theme-default-light">
+
+  <header class="cv-topbar">
+    <div class="cv-topbar-inner">
+      <div class="cv-brand">Context Visualizer</div>
+      <nav class="cv-nav">
+        <a href="#metrics">关键指标</a>
+        <a href="#architecture">架构对比</a>
+        <a href="#timeline">改造历程</a>
+        <a href="#components">组件能力</a>
+        <a href="#code-demo">代码展示</a>
+        <a href="#next">下一步</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="cv-page">
+
+    <!-- ═══ Hero（单列标题+导读） ═══ -->
+    <article class="cv-hero-card">
+      <span class="cv-badge">内部汇报 · 方案说明型</span>
+      <div class="cv-kicker">从"渲染引擎"到"设计系统" — 释放 AI 的内容理解能力</div>
+      <h1 class="cv-title">Context Visualizer v3 改造总结</h1>
+      <p class="cv-subtitle">干掉 720 行 Python 中间层，让 AI 直接输出 HTML，CSS 组件库保证风格一致</p>
+      <div class="cv-summary-box">
+        <ul>
+          <li><strong>核心变化：</strong>AI 从 Markdown 搬运工升级为内容理解者 + 增强者</li>
+          <li><strong>风格保证：</strong>通过 CSS 变量 + 组件 class 规范，而非 Python 模板</li>
+          <li><strong>新增组件：</strong>代码块、数据表格、时间线、Mermaid 图表、指标卡片、对比表格、步骤列表</li>
+        </ul>
+      </div>
+      <div class="cv-meta-row">
+        <span class="cv-chip">houxiangcai</span>
+        <span class="cv-chip">2026-03-27</span>
+        <span class="cv-chip">#设计系统</span>
+        <span class="cv-chip">#v3</span>
+      </div>
+    </article>
+
+    <main class="cv-content">
+
+      <!-- ═══ Metrics ═══ -->
+      <section id="metrics" class="cv-section">
+        <div class="cv-section-head">
+          <h2>关键指标</h2>
+          <p>改造前后的量化对比</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-metric-row">
+            <div class="cv-metric-card">
+              <div class="cv-metric-value cv-metric-value-danger">720</div>
+              <div class="cv-metric-label">Python 行数</div>
+              <div class="cv-metric-sub">已全部废弃</div>
+            </div>
+            <div class="cv-metric-card">
+              <div class="cv-metric-value cv-metric-value-success">0</div>
+              <div class="cv-metric-label">运行时依赖</div>
+              <div class="cv-metric-sub">纯 CSS + HTML</div>
+            </div>
+            <div class="cv-metric-card">
+              <div class="cv-metric-value">12</div>
+              <div class="cv-metric-label">组件类型</div>
+              <div class="cv-metric-sub">原来仅 4 种</div>
+            </div>
+            <div class="cv-metric-card">
+              <div class="cv-metric-value cv-metric-value-success">100%</div>
+              <div class="cv-metric-label">AI 自由度</div>
+              <div class="cv-metric-sub">内容增强能力完全释放</div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:12px;">
+            <span>改造完成度</span><span>100%</span>
+          </div>
+          <div class="cv-progress-bar">
+            <div class="cv-progress-fill cv-progress-fill-success" style="width: 100%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Architecture Comparison ═══ -->
+      <section id="architecture" class="cv-section">
+        <div class="cv-section-head">
+          <h2>架构对比</h2>
+          <p>从模板引擎到设计系统的转变</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-comparison">
+            <div class="cv-comparison-col cv-comparison-before">
+              <div class="cv-comparison-header">v2 旧架构</div>
+              <ul>
+                <li>AI 只能写扁平 Markdown</li>
+                <li>Python 渲染器做死板模板填充</li>
+                <li>不支持代码块语法高亮</li>
+                <li>不支持表格渲染</li>
+                <li>不支持流程图 / 时间线</li>
+                <li>AI 丧失对最终 HTML 的控制权</li>
+                <li><code>parse_sections()</code> 只认 <code>##</code> 和 <code>-</code></li>
+              </ul>
+            </div>
+            <div class="cv-comparison-col cv-comparison-after">
+              <div class="cv-comparison-header">v3 新架构</div>
+              <ul>
+                <li>AI 直接输出带组件 class 的 HTML</li>
+                <li>CSS 设计系统保证风格一致</li>
+                <li>原生代码块 + 语法着色 class</li>
+                <li>完整数据表格组件</li>
+                <li>Mermaid CDN + 时间线组件</li>
+                <li>AI 完全掌控页面表达方式</li>
+                <li>12+ 种组件任意组合</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Flow Chart ═══ -->
+      <section class="cv-section">
+        <div class="cv-section-head">
+          <h2>新旧工作流对比</h2>
+          <p>AI 在内容管道中的角色变化</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-mermaid">
+            <div class="cv-mermaid-title">数据流对比</div>
+            <div class="cv-flow-compare">
+              <!-- v2 旧流程 -->
+              <div class="cv-flow-lane cv-flow-lane-old">
+                <div class="cv-flow-lane-title">v2 旧流程</div>
+                <div class="cv-flow-steps">
+                  <div class="cv-flow-node">AI 生成 Markdown</div>
+                  <div class="cv-flow-arrow"></div>
+                  <div class="cv-flow-node cv-flow-node-bad">Python 渲染器</div>
+                  <div class="cv-flow-arrow"></div>
+                  <div class="cv-flow-node cv-flow-node-bad">HTML 模板填充</div>
+                  <div class="cv-flow-arrow"></div>
+                  <div class="cv-flow-node">输出 HTML</div>
+                </div>
+              </div>
+              <!-- v3 新流程 -->
+              <div class="cv-flow-lane cv-flow-lane-new">
+                <div class="cv-flow-lane-title">v3 新流程</div>
+                <div class="cv-flow-steps">
+                  <div class="cv-flow-node">AI 理解内容</div>
+                  <div class="cv-flow-arrow"></div>
+                  <div class="cv-flow-node cv-flow-node-good">AI 选择组件</div>
+                  <div class="cv-flow-arrow"></div>
+                  <div class="cv-flow-node cv-flow-node-good">AI 直接输出 HTML</div>
+                  <div class="cv-flow-arrow"></div>
+                  <div class="cv-flow-node">CSS 设计系统</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Timeline ═══ -->
+      <section id="timeline" class="cv-section">
+        <div class="cv-section-head">
+          <h2>改造历程</h2>
+          <p>从发现问题到完成改造的关键节点</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-timeline">
+            <div class="cv-timeline-item">
+              <div class="cv-timeline-dot"></div>
+              <div class="cv-timeline-time">2026-03-26</div>
+              <div class="cv-timeline-title">v2 版本上线</div>
+              <div class="cv-timeline-desc">完成基于 Python 渲染器的最小闭环，支持 4 种场景和 2 种主题。</div>
+            </div>
+            <div class="cv-timeline-item">
+              <div class="cv-timeline-dot cv-timeline-dot-warning"></div>
+              <div class="cv-timeline-time">2026-03-27 上午</div>
+              <div class="cv-timeline-title">发现瓶颈</div>
+              <div class="cv-timeline-desc">用户反馈：AI 分析 Markdown 后无法补充流程图、代码块被渲染为纯文本、表格丢失。</div>
+              <div class="cv-timeline-card">
+                <strong>根因：</strong>Python 渲染器是"忠实翻译器"，不理解内容，不能增强内容。AI 在生成 Markdown 的那一刻就丧失了对 HTML 的控制权。
+              </div>
+            </div>
+            <div class="cv-timeline-item">
+              <div class="cv-timeline-dot"></div>
+              <div class="cv-timeline-time">2026-03-27 下午</div>
+              <div class="cv-timeline-title">确定改造方案</div>
+              <div class="cv-timeline-desc">方向：干掉 Python 中间层，转型为 CSS 设计系统 + 提示词规范。AI 直接输出 HTML。</div>
+            </div>
+            <div class="cv-timeline-item">
+              <div class="cv-timeline-dot cv-timeline-dot-success"></div>
+              <div class="cv-timeline-time">2026-03-27 晚上</div>
+              <div class="cv-timeline-title">v3 改造完成</div>
+              <div class="cv-timeline-desc">完成全部改造：SKILL.md 重写、CSS 组件库扩展（12+ 组件）、组件参考手册编写、demo 验证。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Component Showcase ═══ -->
+      <section id="components" class="cv-section">
+        <div class="cv-section-head">
+          <h2>新增组件能力展示</h2>
+          <p>AI 现在可以自由使用这些组件来表达内容</p>
+        </div>
+        <div class="cv-section-body">
+
+          <div class="cv-callout cv-callout-success">
+            <div class="cv-callout-title">✅ 能力升级</div>
+            以下所有组件都是 v3 新增的，v2 版本完全无法渲染它们。
+          </div>
+
+          <h3 style="font-size:18px; margin: 24px 0 12px;">数据表格</h3>
+          <div class="cv-table-wrap">
+            <table class="cv-table">
+              <thead>
+                <tr>
+                  <th>组件</th>
+                  <th>Class</th>
+                  <th>v2 支持</th>
+                  <th>v3 支持</th>
+                  <th>适用场景</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>代码块</td>
+                  <td><code>.cv-code-block</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                  <td>展示代码、配置、命令输出</td>
+                </tr>
+                <tr>
+                  <td>数据表格</td>
+                  <td><code>.cv-table</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                  <td>结构化数据对比</td>
+                </tr>
+                <tr>
+                  <td>时间线</td>
+                  <td><code>.cv-timeline</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                  <td>调试过程、里程碑记录</td>
+                </tr>
+                <tr>
+                  <td>Mermaid 图表</td>
+                  <td><code>.cv-mermaid</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                  <td>流程图、时序图、状态图</td>
+                </tr>
+                <tr>
+                  <td>指标卡片</td>
+                  <td><code>.cv-metric-card</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                  <td>KPI 展示、数据仪表盘</td>
+                </tr>
+                <tr>
+                  <td>对比表格</td>
+                  <td><code>.cv-comparison</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                  <td>方案对比、改造前后</td>
+                </tr>
+                <tr>
+                  <td>步骤列表</td>
+                  <td><code>.cv-steps</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                  <td>操作指引、流程步骤</td>
+                </tr>
+                <tr>
+                  <td>Callout 变体</td>
+                  <td><code>.cv-callout-*</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                  <td>提示、警告、成功、错误</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="font-size:18px; margin: 24px 0 12px;">Callout 变体</h3>
+          <div class="cv-callout cv-callout-info">
+            <div class="cv-callout-title">💡 信息提示</div>
+            这是一个信息提示框，适合补充说明和背景知识。
+          </div>
+          <div class="cv-callout cv-callout-warning">
+            <div class="cv-callout-title">⚠️ 注意事项</div>
+            这是一个警告框，适合标注需要注意的约束条件。
+          </div>
+          <div class="cv-callout cv-callout-danger">
+            <div class="cv-callout-title">🚫 已知限制</div>
+            这是一个错误/危险框，适合标注严重问题或限制。
+          </div>
+
+          <h3 style="font-size:18px; margin: 24px 0 12px;">步骤列表</h3>
+          <div class="cv-steps">
+            <div class="cv-step">
+              <div class="cv-step-num cv-step-num-done">1</div>
+              <div class="cv-step-content">
+                <div class="cv-step-title">重写 SKILL.md</div>
+                <div class="cv-step-desc">从"渲染引擎"转型为"设计系统 + 提示词规范"</div>
+              </div>
+            </div>
+            <div class="cv-step">
+              <div class="cv-step-num cv-step-num-done">2</div>
+              <div class="cv-step-content">
+                <div class="cv-step-title">扩展 CSS 组件库</div>
+                <div class="cv-step-desc">新增代码块、表格、时间线、mermaid、指标卡片、对比表格等 8+ 组件</div>
+              </div>
+            </div>
+            <div class="cv-step">
+              <div class="cv-step-num cv-step-num-done">3</div>
+              <div class="cv-step-content">
+                <div class="cv-step-title">创建组件参考手册</div>
+                <div class="cv-step-desc">AI 可查阅的 HTML 片段示例库</div>
+              </div>
+            </div>
+            <div class="cv-step">
+              <div class="cv-step-num cv-step-num-done">4</div>
+              <div class="cv-step-content">
+                <div class="cv-step-title">生成 Demo 验证</div>
+                <div class="cv-step-desc">用真实内容验证全部组件效果（就是本页面）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Code Demo ═══ -->
+      <section id="code-demo" class="cv-section">
+        <div class="cv-section-head">
+          <h2>代码展示能力</h2>
+          <p>v2 完全无法渲染的代码块，现在原生支持</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-code-block">
+            <div class="cv-code-header">
+              <span class="cv-code-lang">C</span>
+              <span class="cv-code-filename">mep_sdk/session.c</span>
+            </div>
+            <pre><code><span class="cv-hl-comment">/* 添加 session 表项到 MEP */</span>
+<span class="cv-hl-type">int</span> <span class="cv-hl-function">jnet_session_tbl_add</span>(<span class="cv-hl-keyword">struct</span> session_entry *entry) {
+    <span class="cv-hl-keyword">if</span> (!entry)
+        <span class="cv-hl-keyword">return</span> JNET_ERR_PARAM;
+
+    <span class="cv-hl-comment">// 校验 key 模板和 action 格式</span>
+    <span class="cv-hl-type">int</span> ret = validate_session_key(entry-&gt;key, entry-&gt;key_mode);
+    <span class="cv-hl-keyword">if</span> (ret != JNET_OK)
+        <span class="cv-hl-keyword">return</span> ret;
+
+    <span class="cv-hl-comment">// 通过 TSE 写入外部流表</span>
+    <span class="cv-hl-keyword">return</span> <span class="cv-hl-function">tse_em_add</span>(entry-&gt;table_id, entry-&gt;key, entry-&gt;action);
+}</code></pre>
+          </div>
+
+          <div class="cv-code-block">
+            <div class="cv-code-header">
+              <span class="cv-code-lang">Shell</span>
+              <span class="cv-code-filename">诊断命令输出</span>
+            </div>
+            <pre><code>$ tcm_tool show imep cme 0 0 stats
+┌─────────────────────────────────────┐
+│ Quark 0 / CME 0 Statistics         │
+├─────────────────┬───────────────────┤
+│ rx_pkt_cnt      │ 1,234,567         │
+│ tx_pkt_cnt      │ 1,234,560         │
+│ drop_cnt        │ 7                 │
+│ exception_cnt   │ 0                 │
+│ avg_latency     │ 2.3 us            │
+└─────────────────┴───────────────────┘</code></pre>
+          </div>
+
+          <blockquote class="cv-quote">
+            <strong>设计原则：</strong>代码块不依赖外部语法高亮库（如 Prism.js / highlight.js），而是通过简单的 <code>.cv-hl-*</code> class 实现手动着色。这保证了单文件 HTML 的自包含性。
+          </blockquote>
+        </div>
+      </section>
+
+      <!-- ═══ Next Steps ═══ -->
+      <section id="next" class="cv-section">
+        <div class="cv-section-head">
+          <h2>下一步</h2>
+          <p>改造完成后的使用建议</p>
+        </div>
+        <div class="cv-section-body">
+          <p>v3 改造已完成，后续使用时：</p>
+          <ul>
+            <li><strong>触发方式不变</strong> — 依然说"可视化 xxx"，AI 会自动识别场景并确认</li>
+            <li><strong>AI 会自动选择组件</strong> — 根据内容语义决定用时间线、流程图还是对比表格</li>
+            <li><strong>主题随时切换</strong> — "换成 dark" 或 "用 PPT 风格" 即可</li>
+            <li><strong>单文件自包含</strong> — 每个 HTML 文件内嵌所有 CSS，无外部依赖</li>
+          </ul>
+          <div class="cv-callout cv-callout-success">
+            <div class="cv-callout-title">✅ 改造完成</div>
+            Context Visualizer 从 v2 的"模板引擎"成功转型为 v3 的"设计系统"。AI 既能保持风格一致，又能根据内容语义自由选择最合适的表达方式。
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="cv-footer">
+    <div class="cv-footer-card">Context Visualizer v3 — AI 直接输出 HTML，CSS 设计系统保证风格一致 · 2026-03-27</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'neutral',
+      securityLevel: 'sandbox',
+      htmlLabels: false,
+      flowchart: { htmlLabels: false },
+      sequence: { htmlLabels: false },
+      class: { htmlLabels: false }
+    });
+  </script>
+
+</body>
+</html>

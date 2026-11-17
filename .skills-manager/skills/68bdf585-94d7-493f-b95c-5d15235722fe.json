@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "68bdf585-94d7-493f-b95c-5d15235722fe",
+  "path": "skeptical-triage",
+  "path_key": "skeptical-triage",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

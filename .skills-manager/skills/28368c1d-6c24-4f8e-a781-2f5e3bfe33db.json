@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "28368c1d-6c24-4f8e-a781-2f5e3bfe33db",
+  "path": "Upward-Reporting-Excellence-Coach",
+  "path_key": "upward-reporting-excellence-coach",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

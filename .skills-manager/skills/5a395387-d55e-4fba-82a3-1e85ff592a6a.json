@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5a395387-d55e-4fba-82a3-1e85ff592a6a",
+  "path": "lean-startup",
+  "path_key": "lean-startup",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

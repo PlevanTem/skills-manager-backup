@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b6203048-485f-48ab-9371-e86c030c6f87",
+  "path": "jobs-to-be-done",
+  "path_key": "jobs-to-be-done",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

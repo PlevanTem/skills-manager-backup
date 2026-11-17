@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5268d816-f789-4a65-842c-f32b2c57d5da",
+  "path": "evaluationPlan",
+  "path_key": "evaluationplan",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

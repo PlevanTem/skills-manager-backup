@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "1d8f4aa3-820f-487b-9110-76c1fe7cf459",
+  "path": "tencent-ppt",
+  "path_key": "tencent-ppt",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

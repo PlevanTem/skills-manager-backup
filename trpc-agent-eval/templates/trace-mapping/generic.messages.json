@@ -1,0 +1,31 @@
+{
+  "kind": "messages",
+  "record_selector": ["$[*]", "$.traces[*]", "$.data[*]", "$"],
+  "trace_id": ["$.trace_id", "$.id", "$.traceId"],
+  "session_id": ["$.session_id", "$.session.id", "$.conversation_id", "$.conversation.id"],
+  "user_id": ["$.user_id", "$.user.id"],
+  "expected_final_response": [
+    "$.expected.final_response",
+    "$.expected.response",
+    "$.expected_output",
+    "$.reference.output",
+    "$.ground_truth"
+  ],
+  "messages": {
+    "path": "$.messages",
+    "id": ["$.id", "$.message_id"],
+    "role": ["$.role", "$.author.role", "$.type"],
+    "content": ["$.content", "$.text", "$.parts[*].text"],
+    "user_roles": ["user", "human"],
+    "assistant_roles": ["assistant", "ai", "model"],
+    "tool_roles": ["tool", "function"],
+    "tool_calls": ["$.tool_calls", "$.toolCalls"],
+    "tool_call_when": {},
+    "tool_call_id": ["$.id", "$.tool_call_id", "$.call_id"],
+    "tool_call_name": ["$.name", "$.function.name", "$.tool.name"],
+    "tool_call_arguments": ["$.args", "$.arguments", "$.function.arguments", "$.input"],
+    "tool_response_id": ["$.tool_call_id", "$.toolCallId", "$.id"],
+    "tool_response_name": ["$.name", "$.tool_name"],
+    "tool_response_content": ["$.content", "$.response", "$.result", "$.output"]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "eval_id": "case_001",
+  "invocations": [
+    {
+      "user_text": "上海天气怎么样",
+      "expected_output": "18°C",
+      "final_response_pattern": null,
+      "tool_calls": [
+        { "id": "t1", "name": "get_weather", "args": { "city": "上海" } }
+      ]
+    }
+  ]
+}

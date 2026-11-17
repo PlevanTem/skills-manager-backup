@@ -1,0 +1,19 @@
+{
+  "eval_id": "trace_case_001",
+  "eval_mode": "trace",
+  "actual_invocations": [
+    {
+      "user_text": "上海天气怎么样",
+      "actual_output": "上海当前 18°C，多云。",
+      "tool_calls": [
+        { "id": "t1", "name": "get_weather", "args": { "city": "上海" } }
+      ]
+    }
+  ],
+  "invocations": [
+    {
+      "user_text": "上海天气怎么样",
+      "expected_output": "18°C"
+    }
+  ]
+}

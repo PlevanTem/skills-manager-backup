@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "24a97f46-06a1-45d4-b8b3-8089cc11a781",
+  "path": "business-model",
+  "path_key": "business-model",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

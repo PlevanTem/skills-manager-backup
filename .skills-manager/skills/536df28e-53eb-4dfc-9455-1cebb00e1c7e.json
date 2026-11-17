@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "536df28e-53eb-4dfc-9455-1cebb00e1c7e",
+  "path": "trpc-agent-eval",
+  "path_key": "trpc-agent-eval",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

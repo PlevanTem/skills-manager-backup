@@ -1,0 +1,12 @@
+{
+  "kind": "flat",
+  "record_selector": ["$[*]", "$"],
+  "trace_id": ["$.trace_id", "$.id", "$.request_id", "$.run_id"],
+  "session_id": ["$.session_id", "$.conversation_id"],
+  "user_id": ["$.user_id"],
+  "user_input": ["$.prompt", "$.query", "$.input", "$.user_input", "$.request"],
+  "final_response": ["$.response", "$.answer", "$.output", "$.final_response"],
+  "expected_final_response": ["$.expected", "$.expected_output", "$.reference", "$.ground_truth"],
+  "tool_calls": "$.tool_calls[*]",
+  "tool_responses": "$.tool_responses[*]"
+}

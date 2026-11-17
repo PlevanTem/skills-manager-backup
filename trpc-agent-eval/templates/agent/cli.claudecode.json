@@ -1,0 +1,9 @@
+{
+  "mode": "cli",
+  "config": {
+    "command": ["claude", "-p", "--verbose", "--output-format", "stream-json"],
+    "arg_mode": "stdin",
+    "cwd": "/abs/path/to/project",
+    "output_protocol": "claudecode"
+  }
+}

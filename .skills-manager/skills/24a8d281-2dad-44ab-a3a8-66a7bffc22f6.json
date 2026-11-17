@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "24a8d281-2dad-44ab-a3a8-66a7bffc22f6",
+  "path": "ai-regulation",
+  "path_key": "ai-regulation",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

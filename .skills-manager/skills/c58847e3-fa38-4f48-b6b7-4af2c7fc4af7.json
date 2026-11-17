@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "c58847e3-fa38-4f48-b6b7-4af2c7fc4af7",
+  "path": "activation-aha-moment",
+  "path_key": "activation-aha-moment",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

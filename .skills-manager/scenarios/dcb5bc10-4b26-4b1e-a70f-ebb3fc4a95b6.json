@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "scenario_id": "dcb5bc10-4b26-4b1e-a70f-ebb3fc4a95b6",
+  "name": "PM",
+  "description": "评测、需求管理、项目推进、向上汇报、工作交付",
+  "icon": "briefcase",
+  "sort_order": 999
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "c9796860-88e3-433c-8d3a-4625de99ff27",
+  "path": "customer-journey-map",
+  "path_key": "customer-journey-map",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

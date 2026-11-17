@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "f5a70af0-1b6c-4e2d-a080-2ddb6cf84b1e",
+  "path": "influence-psychology",
+  "path_key": "influence-psychology",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

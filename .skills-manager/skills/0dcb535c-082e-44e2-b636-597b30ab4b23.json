@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "0dcb535c-082e-44e2-b636-597b30ab4b23",
+  "path": "bank-seven-steps-solver",
+  "path_key": "bank-seven-steps-solver",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

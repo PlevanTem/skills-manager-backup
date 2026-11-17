@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "51660ad6-a796-4784-8296-97fbe0f78aaf",
+  "path": "circles-method",
+  "path_key": "circles-method",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

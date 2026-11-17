@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "cab97440-6c68-4576-a2ae-77a5199f6287",
+  "path": "obviously-awesome",
+  "path_key": "obviously-awesome",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

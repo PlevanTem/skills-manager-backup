@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "96cd1fce-6076-494d-b37f-6f443cada5ff",
+  "path": "hipaa-bundle",
+  "path_key": "hipaa-bundle",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

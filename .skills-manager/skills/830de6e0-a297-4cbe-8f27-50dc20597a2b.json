@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "830de6e0-a297-4cbe-8f27-50dc20597a2b",
+  "path": "storybrand-messaging",
+  "path_key": "storybrand-messaging",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

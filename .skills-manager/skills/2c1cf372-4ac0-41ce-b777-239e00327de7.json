@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "2c1cf372-4ac0-41ce-b777-239e00327de7",
+  "path": "pestle-analysis",
+  "path_key": "pestle-analysis",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

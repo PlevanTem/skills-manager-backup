@@ -1,0 +1,16 @@
+{
+  "mode": "http",
+  "config": {
+    "url": "https://your-service.example.com/v1/chat",
+    "method": "POST",
+    "headers": {
+      "Authorization": "Bearer ${SECRET:MY_TOKEN}",
+      "Content-Type": "application/json"
+    },
+    "body_template": {
+      "messages": [{ "role": "user", "content": "${QUERY}" }],
+      "stream": false
+    },
+    "response_path": "choices.0.message.content"
+  }
+}

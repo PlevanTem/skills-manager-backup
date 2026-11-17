@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "d7151976-1f02-40ac-8005-5531bacdfd94",
+  "path": "Tenchage-ppt",
+  "path_key": "tenchage-ppt",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

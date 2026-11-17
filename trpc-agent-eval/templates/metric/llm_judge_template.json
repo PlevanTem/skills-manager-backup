@@ -1,0 +1,20 @@
+{
+  "metric_name": "llm_judge_template",
+  "threshold": 0.8,
+  "criterion": {
+    "llmJudge": {
+      "judge_model": {
+        "provider_name": "openai",
+        "model_name": "${MODEL:glm_flash}",
+        "base_url": "${MODEL:glm_flash}",
+        "api_key": "${MODEL:glm_flash}",
+        "generation_config": { "temperature": 0.0 }
+      },
+      "template": {
+        "prompt": "你是严格的评审。用户问题：{user_input}\n\nAgent 回答：{actual_response}\n\n参考答案：{expected_response}\n\n请判断 Agent 回答是否正确并给出 0-1 分数与理由。",
+        "response_scorer_name": "single_score"
+      },
+      "models_aggregator": "all_pass"
+    }
+  }
+}

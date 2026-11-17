@@ -1,0 +1,13 @@
+{
+  "metric_id": "uploaded_example",
+  "num_runs": 1,
+  "metrics": [
+    {
+      "metric_name": "final_response_avg_score",
+      "threshold": 1.0,
+      "criterion": {
+        "finalResponse": { "text": { "match": "contains", "case_insensitive": true } }
+      }
+    }
+  ]
+}

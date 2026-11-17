@@ -1,0 +1,42 @@
+{
+  "eval_set_id": "my_hallucination_set",
+  "name": "幻觉检测评测集",
+  "description": "llm_hallucinations 依赖 grounding context：actual_conversation.intermediate_data 必须同时含 tool_uses 与 tool_responses（API add_case 无法表达 tool_responses，必须用本文件上传）",
+  "eval_cases": [
+    {
+      "eval_id": "grounded_001",
+      "eval_mode": "trace",
+      "actual_conversation": [
+        {
+          "invocation_id": "inv-1",
+          "user_content": { "parts": [{ "text": "公司有哪些产品？" }], "role": "user" },
+          "final_response": { "parts": [{ "text": "公司有产品A（企业协作）、产品B（API/SDK）。" }], "role": "model" },
+          "intermediate_data": {
+            "tool_uses": [
+              { "id": "t1", "name": "knowledge_search", "args": { "query": "公司产品", "top_k": 2 } }
+            ],
+            "tool_responses": [
+              {
+                "id": "t1",
+                "name": "knowledge_search",
+                "response": {
+                  "results": [
+                    { "title": "产品A", "content": "产品A 适用于企业协作，支持文档与任务管理。" },
+                    { "title": "产品B", "content": "产品B 提供 API 与 SDK，便于集成。" }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "conversation": [
+        {
+          "invocation_id": "exp-1",
+          "user_content": { "parts": [{ "text": "公司有哪些产品？" }], "role": "user" },
+          "final_response": { "parts": [{ "text": "公司有产品A（企业协作）、产品B（API/SDK）。" }], "role": "model" }
+        }
+      ]
+    }
+  ]
+}

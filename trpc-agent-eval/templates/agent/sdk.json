@@ -1,0 +1,9 @@
+{
+  "mode": "sdk",
+  "config": {
+    "cwd": "/abs/path/to/agent-project",
+    "module": "agent",
+    "agent_var": "root_agent",
+    "env_vars": []
+  }
+}

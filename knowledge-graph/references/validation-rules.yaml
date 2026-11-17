@@ -1,0 +1,248 @@
+# 知识图谱验证规则 (validation-rules)
+
+> 被 SKILL.md Stage 4 引用，定义自检的详细规则
+
+---
+
+## 一、覆盖率检查
+
+### core_file_coverage — 核心信息覆盖率
+```yaml
+description: "核心信息文件夹中所有名词概念都在 KG 中可找到"
+target: 100%
+method: |
+  1. 遍历核心信息目录下每个 .md 文件
+  2. 提取文件中所有名词概念（类名、术语、枚举值）
+  3. 在 KG 实体列表中查找匹配
+  4. 计算: 匹配数 / 总概念数 × 100%
+pass_criteria: "= 100%"
+fail_action: "列出未覆盖的概念，回 Stage 2 补充提取"
+```
+
+### supplement_coverage — 补充信息覆盖率
+```yaml
+description: "补充信息（名词列表）中 90% 的名词在 KG 中可找到"
+target: "≥ 95%"
+method: |
+  1. 解析名词列表文件
+  2. 提取所有独立名词术语
+  3. 在 KG 实体列表中查找匹配（精确匹配 + 别名匹配）
+  4. 计算覆盖率
+pass_criteria: "≥ 95%"
+fail_action: "列出未覆盖的名词，通过名词库接口（xnoun 或等价接口）补充"
+```
+
+### domain_model_coverage — 领域模型类覆盖率
+```yaml
+description: "领域模型中所有类都在 KG 中有对应实体"
+target: 100%
+method: |
+  1. 从领域模型文件提取所有类名
+  2. 在 KG 实体列表中查找
+  3. 验证类的属性也被记录
+pass_criteria: "= 100%"
+```
+
+### relation_coverage — 关系覆盖率
+```yaml
+description: "领域模型中所有明确的关系都在 KG 中有记录"
+target: "= 100%"
+method: |
+  1. 从领域模型提取所有关系（关联/组合/聚合/继承）
+  2. 在 KG 关系列表中查找匹配
+  3. 计算覆盖率
+pass_criteria: "= 100%"
+fail_action: "列出未覆盖的关系，回 Stage 2 补充提取"
+```
+
+---
+
+## 二、同名实体唯一性检查（铁律 9，阻断级）
+
+```yaml
+unique_entity_name_check:
+  description: "同一业务概念（按 name 字段）在全域知识图谱中只允许存在一个权威实体"
+  severity: "blocker — 不通过则阻断后续 Stage"
+  method: |
+    1. 收集所有领域源文件（*-kg-entities.yaml）中的全部实体
+    2. 按 name 字段分组，找出 name 相同但 id 不同的实体
+    3. 对每组重名实体，判定哪个是权威实体（概念归属领域拥有）
+    4. 标记非权威实体为违规项
+  pass_criteria: "重名实体组数 = 0（每个 name 在全域仅出现一次）"
+  fail_action: |
+    对每个重名组：
+    1. 保留概念归属领域的权威实体
+    2. 删除其余领域的影子副本
+    3. 将引用影子副本的关系（head/tail）改为引用权威实体 ID
+    4. 记录到 kg-entity-mapping.md
+    5. 重新执行校验直至通过
+
+shadow_entity_check:
+  description: "禁止 type=引用实体 或含 cross_domain_ref 字段的影子副本"
+  severity: "blocker — 不通过则阻断后续 Stage"
+  method: |
+    1. 遍历所有实体
+    2. 检查 type 字段是否为「引用实体」
+    3. 检查是否存在 cross_domain_ref 字段
+    4. 任一命中即为违规
+  pass_criteria: "违规实体数 = 0"
+  fail_action: |
+    对每个违规实体：
+    1. 找到 cross_domain_ref 指向的权威实体（或按 name 匹配）
+    2. 删除影子副本
+    3. 将引用该影子副本的关系改为 depends_on 引用权威实体 ID
+    4. 记录到 kg-entity-mapping.md
+```
+
+---
+
+## 三、孤立节点检查（铁律 7）
+
+```yaml
+orphan_check:
+  description: "检测没有任何关系的孤立实体"
+  method: |
+    1. 遍历所有实体
+    2. 对每个实体，检查是否存在至少一条关系（作为头或尾）
+    3. 标记孤立实体
+  pass_criteria: "孤立实体数 = 0（BFS 连通率 = 100%）"
+  fail_action: |
+    对每个孤立实体：
+    1. 首先从原始知识源中寻找可能遗漏的关系
+    2. 如果找不到，通过名词库接口或补充数据源搜索补充
+    3. 如仍无法建立关系，补充域归属边或跨域桥接边
+    4. 重复直至孤立实体数 = 0，不接受任何孤立节点
+```
+
+---
+
+## 四、关系正确性检查
+
+```yaml
+relation_correctness:
+  checks:
+    direction_check:
+      description: "关系的头尾实体是否符合语义"
+      example: "交易订单 → 聚合 → 交易受益单（正确）vs 交易受益单 → 聚合 → 交易订单（错误）"
+
+    cardinality_check:
+      description: "关系的基数是否与领域模型一致"
+
+    domain_range_check:
+      description: "关系的头实体类型是否在定义的域(domain)内，尾实体类型是否在范围(range)内"
+
+    cycle_check:
+      description: "检测不应存在的循环依赖（继承关系不应有环）"
+
+    cross_domain_check:
+      description: "跨业务域的关系是否有合理的业务语义支撑"
+```
+
+---
+
+## 五、能力问题验证
+
+```yaml
+competency_question_test:
+  description: "用预定义的能力问题测试 KG 的回答能力"
+  method: |
+    1. 对每个能力问题，尝试在 KG 中找到回答路径
+    2. 路径 = 从问题涉及的实体出发，沿关系遍历到答案实体
+    3. 如果找不到路径，说明 KG 缺少必要的知识
+  pass_criteria: "P0 问题 100% 可回答，P1 问题 ≥ 90% 可回答"
+```
+
+---
+
+## 六、规则层验证（Rules Layer）
+
+```yaml
+rule_involved_entities_ref_check:
+  description: "规则的 involvedEntities 中每个 ID 必须在 KG 实体列表中存在"
+  severity: "error"
+  method: |
+    1. 遍历 kg-rules.yaml 中每条规则的 involvedEntities
+    2. 对每个 entity ID，检查是否存在于 kg-entities.yaml
+    3. 标记未找到的引用
+  pass_criteria: "悬空引用数 = 0"
+  fail_action: "列出悬空引用，补充对应实体或修正 ID"
+
+rule_condition_action_non_empty:
+  description: "每条规则的 condition 和 action 字段不能为空"
+  severity: "warning"
+  method: |
+    1. 遍历 kg-rules.yaml 中每条规则
+    2. 检查 condition 和 action 字段是否非空且长度 ≥ 5 字符
+  pass_criteria: "空字段数 = 0"
+  fail_action: "列出空字段的规则，回 Stage 2 从原始文档补充"
+
+rule_type_validity:
+  description: "规则 type 必须为预定义类型之一"
+  severity: "error"
+  allowed_types: ["业务约束", "状态机规则", "权限规则", "数据校验"]
+  method: |
+    1. 遍历 kg-rules.yaml 中每条规则的 type 字段
+    2. 检查是否在 allowed_types 内
+  pass_criteria: "非法类型数 = 0"
+  fail_action: "修正为最接近的合法类型"
+```
+
+---
+
+## 七、流程层验证（Flows Layer）
+
+```yaml
+flow_steps_non_empty:
+  description: "每个流程必须包含至少一个步骤"
+  severity: "error"
+  method: |
+    1. 遍历 kg-flows.yaml 中每个流程
+    2. 检查 steps 列表是否非空
+  pass_criteria: "空步骤流程数 = 0"
+  fail_action: "从原始用例规约中补充步骤"
+
+flow_entity_ref_check:
+  description: "流程步骤中的 entityRef 必须在 KG 实体列表中存在"
+  severity: "error"
+  method: |
+    1. 遍历每个流程的每个步骤的 entityRef 字段
+    2. 跳过空值
+    3. 对非空 entityRef，检查是否存在于 kg-entities.yaml
+  pass_criteria: "悬空引用数 = 0"
+  fail_action: "列出悬空引用，补充对应实体或修正 ID"
+
+flow_rule_ref_check:
+  description: "流程步骤中的 ruleRef 必须在 KG 规则列表中存在"
+  severity: "warning"
+  method: |
+    1. 遍历每个流程的每个步骤的 ruleRef 字段
+    2. 跳过空值
+    3. 对非空 ruleRef，检查是否存在于 kg-rules.yaml
+  pass_criteria: "悬空引用数 = 0"
+  fail_action: "列出悬空引用，补充对应规则或修正 ID"
+```
+
+---
+
+## 八、术语表层验证（Glossary Layer）
+
+```yaml
+glossary_entity_ref_check:
+  description: "术语的 entityRef 必须在 KG 实体列表中存在"
+  severity: "warning"
+  method: |
+    1. 遍历 kg-glossary.yaml 中每条术语的 entityRef 字段
+    2. 跳过空值
+    3. 对非空 entityRef，检查是否存在于 kg-entities.yaml
+  pass_criteria: "悬空引用数 = 0"
+  fail_action: "修正 entityRef 或标记为待补充"
+
+glossary_term_uniqueness:
+  description: "术语表中 term 字段全局唯一，不允许重复术语"
+  severity: "error"
+  method: |
+    1. 收集所有术语的 term 字段
+    2. 按 term 分组，找出重复项
+  pass_criteria: "重复术语数 = 0"
+  fail_action: "合并重复术语条目，保留信息更完整的版本"
+```

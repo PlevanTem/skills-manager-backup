@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "4132e7ae-b968-4253-8e75-435945a67cf9",
+  "path": "funnel-diagnostics",
+  "path_key": "funnel-diagnostics",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

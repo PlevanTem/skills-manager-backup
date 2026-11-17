@@ -1,0 +1,25 @@
+{
+  "metric_name": "llm_rubric_knowledge_recall",
+  "threshold": 0.8,
+  "criterion": {
+    "llmJudge": {
+      "judge_model": {
+        "provider_name": "openai",
+        "model_name": "${MODEL:glm_flash}",
+        "base_url": "${MODEL:glm_flash}",
+        "api_key": "${MODEL:glm_flash}",
+        "generation_config": { "temperature": 0.0 }
+      },
+      "knowledge_tool_names": ["knowledge_search"],
+      "rubrics": [
+        {
+          "id": "uses_retrieved_knowledge",
+          "content": { "text": "回答充分利用了检索到的知识，关键信息均有出处支撑" },
+          "description": "知识召回",
+          "type": "KNOWLEDGE_RECALL"
+        }
+      ],
+      "models_aggregator": "all_pass"
+    }
+  }
+}

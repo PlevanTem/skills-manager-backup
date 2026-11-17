@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "ecfab432-7ebb-4faa-8bac-2bc3abb7dca5",
+  "path": "competitive-battlecard",
+  "path_key": "competitive-battlecard",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

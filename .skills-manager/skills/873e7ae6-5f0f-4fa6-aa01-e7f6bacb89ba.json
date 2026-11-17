@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "873e7ae6-5f0f-4fa6-aa01-e7f6bacb89ba",
+  "path": "cohort-analysis",
+  "path_key": "cohort-analysis",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

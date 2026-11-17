@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XLine MEP SDK — 项目仪表盘</title>
+  <style>
+:root{--bg:#f6f8fb;--bg-soft:#eef3f8;--panel:#fff;--panel-soft:#f7f9fc;--line:#d7dfeb;--text:#162033;--muted:#61738f;--accent:#2563eb;--accent-soft:#eff6ff;--success:#0f9f6e;--warning:#b7791f;--danger:#dc2626;--max:1180px;--radius:20px;--shadow:0 18px 42px rgba(15,23,42,.08);--font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;--brand-color:#2563eb}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--font);background:radial-gradient(circle at top,rgba(37,99,235,.08),transparent 28%),linear-gradient(180deg,var(--bg),var(--bg-soft));color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}
+.cv-topbar{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:rgba(255,255,255,.88);border-bottom:1px solid var(--line)}.cv-topbar-inner,.cv-page,.cv-footer{max-width:var(--max);margin:0 auto;padding-left:24px;padding-right:24px}.cv-topbar-inner{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}.cv-brand{font-weight:800;letter-spacing:.03em;color:var(--accent)}.cv-nav{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}.cv-nav::-webkit-scrollbar{display:none}.cv-nav a{white-space:nowrap;padding:8px 12px;border-radius:999px;font-size:13px;color:var(--muted);border:1px solid transparent}.cv-nav a:hover{color:var(--text);border-color:rgba(37,99,235,.14);background:var(--accent-soft)}.cv-page{padding-top:42px;padding-bottom:40px}.cv-footer{padding-top:10px;padding-bottom:56px;color:var(--muted);font-size:13px}.cv-footer-card{padding:16px 18px;border-radius:18px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}
+.cv-hero-card,.cv-section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.cv-hero-card{padding:30px 32px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}.cv-hero-card::after{content:"";position:absolute;right:-56px;bottom:-86px;width:220px;height:220px;background:radial-gradient(circle,rgba(37,99,235,.12),transparent 68%);pointer-events:none}.cv-badge{display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:var(--accent-soft);border:1px solid rgba(37,99,235,.14);color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}.cv-badge-success{background:rgba(15,159,110,.08);border-color:rgba(15,159,110,.14);color:var(--success)}.cv-title{margin:6px 0;font-size:clamp(24px,4vw,36px);line-height:1.1;letter-spacing:-.03em}.cv-subtitle{color:var(--muted);font-size:15px;margin:0}.cv-chip{display:inline-flex;align-items:center;min-height:28px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel-soft);color:var(--muted);font-size:12px;font-weight:700}.cv-content{display:grid;gap:22px;margin-top:24px}.cv-section{padding:26px 24px}.cv-section-head{margin-bottom:16px}.cv-section-head h2{margin:0 0 6px;font-size:24px}.cv-section-head p{margin:0;color:var(--muted);font-size:14px}
+.cv-metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin:20px 0}.cv-metric-card{padding:20px;border-radius:var(--radius);background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center}.cv-metric-value{font-size:clamp(28px,4vw,42px);font-weight:900;letter-spacing:-.02em;line-height:1.1;color:var(--accent)}.cv-metric-value-success{color:var(--success)}.cv-metric-value-warning{color:var(--warning)}.cv-metric-value-danger{color:var(--danger)}.cv-metric-label{margin-top:6px;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}.cv-metric-sub{margin-top:4px;font-size:12px;color:var(--muted)}
+.cv-progress-bar{margin:12px 0;height:8px;background:var(--panel-soft);border-radius:4px;overflow:hidden;border:1px solid var(--line)}.cv-progress-fill{height:100%;background:var(--accent);border-radius:4px}.cv-progress-fill-success{background:var(--success)}
+.cv-gantt{margin:20px 0;padding:20px;border-radius:var(--radius);background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);overflow-x:auto}.cv-gantt-title{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px}.cv-gantt-row{display:grid;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);min-height:36px}.cv-gantt-row:last-child{border-bottom:none}.cv-gantt-label{font-size:13px;font-weight:600;color:var(--text);padding-right:12px;white-space:nowrap}.cv-gantt-track{position:relative;height:24px;background:var(--panel-soft);border-radius:6px}.cv-gantt-bar{position:absolute;top:2px;height:20px;border-radius:4px;background:var(--accent);opacity:.85;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cv-gantt-bar-success{background:var(--success)}.cv-gantt-bar-warning{background:var(--warning)}.cv-gantt-bar-danger{background:var(--danger)}
+.cv-kanban{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:20px 0}.cv-kanban-column{background:var(--panel-soft);border-radius:var(--radius);border:1px solid var(--line);padding:16px;min-height:100px}.cv-kanban-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--line)}.cv-kanban-header-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}.cv-kanban-header-count{font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:999px}.cv-kanban-column-todo .cv-kanban-header{border-color:var(--muted)}.cv-kanban-column-doing .cv-kanban-header{border-color:var(--accent)}.cv-kanban-column-done .cv-kanban-header{border-color:var(--success)}.cv-kanban-column-blocked .cv-kanban-header{border-color:var(--danger)}.cv-kanban-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.04)}.cv-kanban-card:last-child{margin-bottom:0}.cv-kanban-card-title{font-size:14px;font-weight:700;color:var(--text);line-height:1.4}.cv-kanban-card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.cv-kanban-card-tag{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:700}.cv-kanban-card-tag-p0{background:rgba(220,38,38,.1);color:var(--danger)}.cv-kanban-card-tag-p1{background:rgba(183,121,31,.1);color:var(--warning)}.cv-kanban-card-tag-owner{background:var(--panel-soft);color:var(--muted);border:1px solid var(--line)}
+.cv-pie-chart{margin:20px 0;display:flex;align-items:center;gap:24px;flex-wrap:wrap}.cv-pie-visual{width:140px;height:140px;border-radius:50%;flex-shrink:0;position:relative}.cv-pie-visual-donut::after{content:attr(data-center);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:var(--text)}.cv-pie-legend{display:flex;flex-direction:column;gap:6px}.cv-pie-legend-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)}.cv-pie-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}.cv-pie-legend-value{font-weight:700;margin-left:auto;color:var(--muted)}
+.cv-hbar-chart{margin:20px 0}.cv-hbar-row{display:grid;grid-template-columns:120px 1fr 60px;gap:12px;align-items:center;margin-bottom:10px}.cv-hbar-label{font-size:13px;font-weight:600;color:var(--text);text-align:right}.cv-hbar-track{height:24px;background:var(--panel-soft);border-radius:6px;border:1px solid var(--line);overflow:hidden}.cv-hbar-fill{height:100%;border-radius:6px;background:var(--accent)}.cv-hbar-fill-success{background:var(--success)}.cv-hbar-fill-warning{background:var(--warning)}.cv-hbar-value{font-size:13px;font-weight:700;color:var(--muted)}
+.cv-risk-list{margin:16px 0}.cv-risk-list-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.cv-risk-list-item:last-child{border-bottom:none}.cv-risk-level{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}.cv-risk-level-low{background:var(--success)}.cv-risk-level-medium{background:var(--warning)}.cv-risk-level-high{background:var(--danger)}.cv-risk-content{flex:1}.cv-risk-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}.cv-risk-desc{font-size:13px;color:var(--muted);line-height:1.5}
+.cv-callout{margin:16px 0;padding:14px 18px;border-radius:16px;border:1px solid rgba(37,99,235,.14);background:var(--accent-soft);color:var(--text);line-height:1.6}.cv-callout-title{font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px}.cv-callout-info .cv-callout-title{color:var(--accent)}
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.cv-topbar{display:none!important}body{background:#fff!important}.cv-hero-card,.cv-section,.cv-metric-card,.cv-kanban-column,.cv-gantt{box-shadow:none!important;break-inside:avoid}}
+@media(max-width:920px){.cv-kanban{grid-template-columns:1fr}.cv-metric-row{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body class="theme-default-light cv-brand-custom">
+  <header class="cv-topbar">
+    <div class="cv-topbar-inner">
+      <div class="cv-brand">TNIC · XLine Team</div>
+      <nav class="cv-nav">
+        <a href="#metrics">指标</a>
+        <a href="#gantt">里程碑</a>
+        <a href="#kanban">看板</a>
+        <a href="#modules">模块</a>
+        <a href="#risks">风险</a>
+      </nav>
+    </div>
+  </header>
+  <div class="cv-page">
+    <!-- Hero -->
+    <div class="cv-hero-card">
+      <div>
+        <span class="cv-badge-success" style="display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:rgba(15,159,110,.08);border:1px solid rgba(15,159,110,.14);color:var(--success);font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;">● ON TRACK</span>
+        <h1 class="cv-title">XLine MEP SDK 项目仪表盘</h1>
+        <p class="cv-subtitle">Q1 2026 冲刺阶段 · 总进度 78%</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <span class="cv-chip">📅 更新：2026-03-27</span>
+        <span class="cv-chip">🎯 目标：v1.2.0 GA</span>
+        <span class="cv-chip">👥 5 人</span>
+      </div>
+    </div>
+    <main class="cv-content">
+      <!-- Metrics -->
+      <section id="metrics" class="cv-section">
+        <div class="cv-section-head"><h2>核心指标</h2><p>项目健康度一览</p></div>
+        <div class="cv-metric-row">
+          <div class="cv-metric-card">
+            <div class="cv-metric-value">78%</div>
+            <div class="cv-metric-label">总进度</div>
+            <div class="cv-metric-sub">Q1 目标 90%</div>
+          </div>
+          <div class="cv-metric-card">
+            <div class="cv-metric-value cv-metric-value-success">21</div>
+            <div class="cv-metric-label">已完成任务</div>
+            <div class="cv-metric-sub">本周 +5</div>
+          </div>
+          <div class="cv-metric-card">
+            <div class="cv-metric-value cv-metric-value-warning">14</div>
+            <div class="cv-metric-label">剩余天数</div>
+            <div class="cv-metric-sub">Q1 截止 4/10</div>
+          </div>
+          <div class="cv-metric-card">
+            <div class="cv-metric-value cv-metric-value-success">98%</div>
+            <div class="cv-metric-label">UT 通过率</div>
+            <div class="cv-metric-sub">1,234 用例</div>
+          </div>
+          <div class="cv-metric-card">
+            <div class="cv-metric-value cv-metric-value-danger">3</div>
+            <div class="cv-metric-label">风险项</div>
+            <div class="cv-metric-sub">1高 / 1中 / 1低</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>Q1 总进度</span><span>78%</span></div>
+        <div class="cv-progress-bar"><div class="cv-progress-fill" style="width:78%"></div></div>
+      </section>
+      <!-- Gantt -->
+      <section id="gantt" class="cv-section">
+        <div class="cv-section-head"><h2>里程碑甘特图</h2><p>Q1 关键节点 (W10 - W16)</p></div>
+        <div class="cv-gantt">
+          <div class="cv-gantt-row" style="grid-template-columns:140px 1fr;"><div class="cv-gantt-label">API 重构</div><div class="cv-gantt-track"><div class="cv-gantt-bar cv-gantt-bar-success" style="left:0%;width:57%;">W10-W13 ✓</div></div></div>
+          <div class="cv-gantt-row" style="grid-template-columns:140px 1fr;"><div class="cv-gantt-label">UT 覆盖</div><div class="cv-gantt-track"><div class="cv-gantt-bar cv-gantt-bar-success" style="left:14%;width:43%;">W11-W13 ✓</div></div></div>
+          <div class="cv-gantt-row" style="grid-template-columns:140px 1fr;"><div class="cv-gantt-label">热升级方案</div><div class="cv-gantt-track"><div class="cv-gantt-bar cv-gantt-bar-warning" style="left:43%;width:28%;">W13-W15</div></div></div>
+          <div class="cv-gantt-row" style="grid-template-columns:140px 1fr;"><div class="cv-gantt-label">仿真验证</div><div class="cv-gantt-track"><div class="cv-gantt-bar" style="left:43%;width:43%;">W13-W16</div></div></div>
+          <div class="cv-gantt-row" style="grid-template-columns:140px 1fr;"><div class="cv-gantt-label">性能基线</div><div class="cv-gantt-track"><div class="cv-gantt-bar cv-gantt-bar-danger" style="left:57%;width:28%;">W14-W16</div></div></div>
+          <div class="cv-gantt-row" style="grid-template-columns:140px 1fr;"><div class="cv-gantt-label">文档交付</div><div class="cv-gantt-track"><div class="cv-gantt-bar" style="left:71%;width:28%;">W15-W16</div></div></div>
+        </div>
+      </section>
+      <!-- Kanban -->
+      <section id="kanban" class="cv-section">
+        <div class="cv-section-head"><h2>任务看板</h2><p>当前冲刺任务分布</p></div>
+        <div class="cv-kanban">
+          <div class="cv-kanban-column cv-kanban-column-blocked">
+            <div class="cv-kanban-header"><span class="cv-kanban-header-title">阻塞</span><span class="cv-kanban-header-count">1</span></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">仿真环境集成测试</div><div class="cv-kanban-card-meta"><span class="cv-kanban-card-tag cv-kanban-card-tag-p0">P0</span><span class="cv-kanban-card-tag cv-kanban-card-tag-owner">@李四</span></div></div>
+          </div>
+          <div class="cv-kanban-column cv-kanban-column-doing">
+            <div class="cv-kanban-header"><span class="cv-kanban-header-title">进行中</span><span class="cv-kanban-header-count">3</span></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">热升级流程验证</div><div class="cv-kanban-card-meta"><span class="cv-kanban-card-tag cv-kanban-card-tag-p0">P0</span></div></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">LCAM 性能基线</div></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">双镜像设计文档</div></div>
+          </div>
+          <div class="cv-kanban-column cv-kanban-column-todo">
+            <div class="cv-kanban-header"><span class="cv-kanban-header-title">待启动</span><span class="cv-kanban-header-count">2</span></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">OCM TCAM 资源优化</div></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">API 文档更新</div></div>
+          </div>
+          <div class="cv-kanban-column cv-kanban-column-done">
+            <div class="cv-kanban-header"><span class="cv-kanban-header-title">已完成</span><span class="cv-kanban-header-count">5</span></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">Session 表 API 重构</div></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">dev_entry 表 UT</div></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">vport_property 优化</div></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">SDK v1.2.0-rc1</div></div>
+            <div class="cv-kanban-card"><div class="cv-kanban-card-title">CV v4 升级</div></div>
+          </div>
+        </div>
+      </section>
+      <!-- Module Progress -->
+      <section id="modules" class="cv-section">
+        <div class="cv-section-head"><h2>模块进度 + 资源分配</h2><p>各子系统完成度与人力分布</p></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div>
+            <div class="cv-hbar-chart">
+              <div class="cv-hbar-row"><div class="cv-hbar-label">Session 表</div><div class="cv-hbar-track"><div class="cv-hbar-fill cv-hbar-fill-success" style="width:100%"></div></div><div class="cv-hbar-value">100%</div></div>
+              <div class="cv-hbar-row"><div class="cv-hbar-label">dev_entry</div><div class="cv-hbar-track"><div class="cv-hbar-fill cv-hbar-fill-success" style="width:95%"></div></div><div class="cv-hbar-value">95%</div></div>
+              <div class="cv-hbar-row"><div class="cv-hbar-label">vport_property</div><div class="cv-hbar-track"><div class="cv-hbar-fill cv-hbar-fill-success" style="width:90%"></div></div><div class="cv-hbar-value">90%</div></div>
+              <div class="cv-hbar-row"><div class="cv-hbar-label">热升级</div><div class="cv-hbar-track"><div class="cv-hbar-fill" style="width:60%"></div></div><div class="cv-hbar-value">60%</div></div>
+              <div class="cv-hbar-row"><div class="cv-hbar-label">OCM TCAM</div><div class="cv-hbar-track"><div class="cv-hbar-fill cv-hbar-fill-warning" style="width:30%"></div></div><div class="cv-hbar-value">30%</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="cv-pie-chart">
+              <div class="cv-pie-visual cv-pie-visual-donut" data-center="5人" style="background:conic-gradient(var(--accent) 0deg 144deg,var(--success) 144deg 252deg,var(--warning) 252deg 324deg,var(--muted) 324deg 360deg);"></div>
+              <div class="cv-pie-legend">
+                <div class="cv-pie-legend-item"><span class="cv-pie-legend-dot" style="background:var(--accent)"></span>SDK 开发<span class="cv-pie-legend-value">2人</span></div>
+                <div class="cv-pie-legend-item"><span class="cv-pie-legend-dot" style="background:var(--success)"></span>测试验证<span class="cv-pie-legend-value">1.5人</span></div>
+                <div class="cv-pie-legend-item"><span class="cv-pie-legend-dot" style="background:var(--warning)"></span>热升级<span class="cv-pie-legend-value">1人</span></div>
+                <div class="cv-pie-legend-item"><span class="cv-pie-legend-dot" style="background:var(--muted)"></span>文档<span class="cv-pie-legend-value">0.5人</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Risks -->
+      <section id="risks" class="cv-section">
+        <div class="cv-section-head"><h2>风险看板</h2><p>需要关注的问题项</p></div>
+        <div class="cv-risk-list">
+          <div class="cv-risk-list-item"><div class="cv-risk-level cv-risk-level-high">H</div><div class="cv-risk-content"><div class="cv-risk-title">仿真环境 29.20.232.79 不稳定</div><div class="cv-risk-desc">SoC 固件 bug 导致 DPE 挂死，已申请切换 226 环境。<strong>缓解：</strong>优先本地 UT 验证。</div></div></div>
+          <div class="cv-risk-list-item"><div class="cv-risk-level cv-risk-level-medium">M</div><div class="cv-risk-content"><div class="cv-risk-title">热升级 IMEM 双镜像空间限制</div><div class="cv-risk-desc">可用指令空间从 8K 减至 4K 条，当前微码 3.2K 条。<strong>缓解：</strong>设置编译时自动检查。</div></div></div>
+          <div class="cv-risk-list-item"><div class="cv-risk-level cv-risk-level-low">L</div><div class="cv-risk-content"><div class="cv-risk-title">API 文档更新滞后</div><div class="cv-risk-desc">重构完成的 5 个模块文档尚未同步。<strong>缓解：</strong>排入 W15 计划。</div></div></div>
+        </div>
+      </section>
+      <!-- Summary -->
+      <div class="cv-callout cv-callout-info">
+        <div class="cv-callout-title">📊 仪表盘说明</div>
+        本仪表盘每周五自动更新。数据源：TAPD 任务系统 + UT 覆盖率报告 + 仿真环境监控。如有数据异常请联系 @侯翔蔡。
+      </div>
+    </main>
+  </div>
+  <footer class="cv-footer">
+    <div class="cv-footer-card">TNIC / XLine Team · 项目仪表盘 · 2026-03-27 · Powered by Context Visualizer v4</div>
+  </footer>
+</body>
+</html>

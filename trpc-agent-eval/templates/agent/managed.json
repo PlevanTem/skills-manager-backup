@@ -1,0 +1,11 @@
+{
+  "mode": "managed",
+  "config": {
+    "provider": "codex",
+    "runtime_id": "<从 GET /api/runtimes 选一个 status=online 且 provider 匹配的 id>",
+    "cwd": "/absolute/path/on/worker",
+    "model": "",
+    "env_vars": [],
+    "custom_args": []
+  }
+}

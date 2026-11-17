@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEP SDK 技术对齐会 — 2026.03.26 会议纪要</title>
+  <style>
+/* === Theme: default-light with brand customization === */
+:root {
+  --bg: #f6f8fb;
+  --bg-soft: #eef3f8;
+  --panel: #ffffff;
+  --panel-soft: #f7f9fc;
+  --line: #d7dfeb;
+  --text: #162033;
+  --muted: #61738f;
+  --accent: #0ea5e9;
+  --accent-soft: #f0f9ff;
+  --success: #0f9f6e;
+  --warning: #b7791f;
+  --danger: #dc2626;
+  --neutral: #64748b;
+  --max: 1180px;
+  --radius: 20px;
+  --shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --brand-color: #0ea5e9;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  background:
+    radial-gradient(circle at top, rgba(14, 165, 233, 0.08), transparent 28%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+.cv-topbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(16px); background: rgba(255, 255, 255, 0.88); border-bottom: 1px solid var(--line); }
+.cv-topbar-inner, .cv-page, .cv-footer { max-width: var(--max); margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+.cv-topbar-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.cv-brand { font-weight: 800; letter-spacing: 0.03em; color: var(--accent); white-space: nowrap; }
+.cv-nav { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.cv-nav::-webkit-scrollbar { display: none; }
+.cv-nav a { white-space: nowrap; padding: 8px 12px; border-radius: 999px; font-size: 13px; color: var(--muted); border: 1px solid transparent; }
+.cv-nav a:hover { color: var(--text); border-color: rgba(14,165,233,0.14); background: var(--accent-soft); }
+.cv-page { padding-top: 42px; padding-bottom: 40px; }
+.cv-footer { padding-top: 10px; padding-bottom: 56px; color: var(--muted); font-size: 13px; }
+.cv-footer-card { padding: 16px 18px; border-radius: 18px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+
+/* === Components === */
+.cv-hero-card, .cv-section, .cv-summary-box { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.cv-hero-card { padding: 34px 32px; position: relative; overflow: hidden; }
+.cv-hero-card::after { content: ""; position: absolute; right: -56px; bottom: -86px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(14,165,233,0.12), transparent 68%); pointer-events: none; }
+.cv-badge { display: inline-flex; align-items: center; padding: 7px 14px; border-radius: 999px; background: var(--accent-soft); border: 1px solid rgba(14,165,233,0.14); color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.cv-kicker { margin-top: 14px; color: var(--accent); font-size: 13px; font-weight: 700; letter-spacing: 0.03em; }
+.cv-title { margin: 18px 0 12px; font-size: clamp(28px, 5vw, 46px); line-height: 1.1; letter-spacing: -0.03em; }
+.cv-subtitle { color: var(--muted); font-size: 18px; margin: 0 0 16px; }
+.cv-meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.cv-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-soft); color: var(--muted); font-size: 12px; font-weight: 700; }
+
+.cv-content { display: grid; gap: 22px; margin-top: 24px; }
+.cv-section { padding: 26px 24px; }
+.cv-section-head { margin-bottom: 16px; }
+.cv-section-head h2 { margin: 0 0 6px; font-size: 24px; }
+.cv-section-head p { margin: 0; color: var(--muted); font-size: 14px; }
+.cv-section-body p { margin: 0 0 12px; }
+.cv-section-body code { padding: 2px 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); font-size: 0.92em; }
+
+/* Callout */
+.cv-callout { margin: 16px 0; padding: 14px 18px; border-radius: 16px; border: 1px solid rgba(14,165,233,0.14); background: var(--accent-soft); color: var(--text); line-height: 1.6; }
+.cv-callout-title { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+.cv-callout-info .cv-callout-title { color: var(--accent); }
+.cv-callout-success { border-color: rgba(15,159,110,0.2); background: rgba(15,159,110,0.08); }
+.cv-callout-success .cv-callout-title { color: var(--success); }
+.cv-callout-warning { border-color: rgba(183,121,31,0.2); background: rgba(183,121,31,0.08); }
+.cv-callout-warning .cv-callout-title { color: var(--warning); }
+
+/* Tags */
+.cv-tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.cv-tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid var(--line); background: var(--panel-soft); color: var(--muted); }
+.cv-tag-accent { color: var(--accent); border-color: rgba(14,165,233,0.2); background: var(--accent-soft); }
+.cv-tag-success { color: var(--success); border-color: rgba(15,159,110,0.2); background: rgba(15,159,110,0.08); }
+.cv-tag-warning { color: var(--warning); border-color: rgba(183,121,31,0.2); background: rgba(183,121,31,0.08); }
+.cv-tag-danger { color: var(--danger); border-color: rgba(220,38,38,0.2); background: rgba(220,38,38,0.08); }
+
+/* Timeline */
+.cv-timeline { margin: 20px 0; padding-left: 28px; position: relative; }
+.cv-timeline::before { content: ""; position: absolute; left: 11px; top: 6px; bottom: 6px; width: 2px; background: var(--line); border-radius: 1px; }
+.cv-timeline-item { position: relative; padding: 0 0 24px 20px; }
+.cv-timeline-item:last-child { padding-bottom: 0; }
+.cv-timeline-dot { position: absolute; left: -22px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 2px var(--accent); }
+.cv-timeline-dot-success { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+.cv-timeline-dot-warning { background: var(--warning); box-shadow: 0 0 0 2px var(--warning); }
+.cv-timeline-time { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; }
+.cv-timeline-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.cv-timeline-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* Table */
+.cv-table-wrap { margin: 16px 0; overflow-x: auto; border-radius: 16px; border: 1px solid var(--line); background: var(--panel); box-shadow: var(--shadow); }
+.cv-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.cv-table thead { background: var(--panel-soft); border-bottom: 2px solid var(--line); }
+.cv-table th { padding: 12px 16px; text-align: left; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; }
+.cv-table td { padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--text); vertical-align: top; }
+.cv-table tbody tr:last-child td { border-bottom: none; }
+.cv-table tbody tr:hover { background: var(--panel-soft); }
+.cv-table-sortable { cursor: pointer; user-select: none; }
+.cv-table-sortable:hover { color: var(--accent); }
+.cv-sort-icon { font-size: 11px; opacity: 0.5; }
+.cv-sort-asc .cv-sort-icon, .cv-sort-desc .cv-sort-icon { opacity: 1; color: var(--accent); }
+
+/* Tab */
+.cv-tabs { margin: 20px 0; }
+.cv-tab-nav { display: flex; gap: 4px; padding: 4px; background: var(--panel-soft); border-radius: 14px; border: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+.cv-tab-nav::-webkit-scrollbar { display: none; }
+.cv-tab-btn { padding: 8px 16px; border: none; border-radius: 10px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s ease; font-family: inherit; }
+.cv-tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.6); }
+.cv-tab-btn-active { color: var(--accent); background: var(--panel); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.cv-tab-panel { display: none; padding: 20px 0; }
+.cv-tab-panel-active { display: block; }
+
+/* Collapse */
+.cv-collapse { margin: 8px 0; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); overflow: hidden; }
+.cv-collapse-trigger { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.2s ease; }
+.cv-collapse-trigger:hover { background: var(--panel-soft); }
+.cv-collapse-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.cv-collapse-icon { font-size: 14px; color: var(--muted); transition: transform 0.3s ease; }
+.cv-collapse-open .cv-collapse-icon { transform: rotate(90deg); }
+.cv-collapse-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.cv-collapse-body-inner { padding: 0 18px 16px; font-size: 14px; color: var(--text); line-height: 1.7; }
+
+/* Accordion */
+.cv-accordion { margin: 20px 0; }
+.cv-accordion .cv-collapse { border-radius: 0; border-bottom: none; }
+.cv-accordion .cv-collapse:first-child { border-radius: 14px 14px 0 0; }
+.cv-accordion .cv-collapse:last-child { border-radius: 0 0 14px 14px; border-bottom: 1px solid var(--line); }
+
+/* Steps */
+.cv-steps { margin: 20px 0; }
+.cv-step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.cv-step:last-child { border-bottom: none; }
+.cv-step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+.cv-step-content { flex: 1; min-width: 0; }
+.cv-step-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.cv-step-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* Print */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .cv-topbar { display: none !important; }
+  body { background: #fff !important; }
+  .cv-hero-card, .cv-section, .cv-table-wrap { box-shadow: none !important; break-inside: avoid; }
+  .cv-tab-nav { display: none !important; }
+  .cv-tab-panel { display: block !important; border-top: 1px solid #d7dfeb; padding-top: 12px; margin-top: 12px; }
+  .cv-tab-panel::before { content: attr(data-tab-label); display: block; font-weight: 800; font-size: 11px; color: #61738f; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .cv-collapse-body { display: block !important; max-height: none !important; overflow: visible !important; }
+}
+
+
+  </style>
+</head>
+<body class="theme-default-light cv-brand-custom">
+
+  <header class="cv-topbar">
+    <div class="cv-topbar-inner">
+      <div class="cv-brand">TNIC · XLine Team</div>
+      <nav class="cv-nav">
+        <a href="#agenda">议题</a>
+        <a href="#discussion">讨论</a>
+        <a href="#decisions">决议</a>
+        <a href="#actions">待办</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="cv-page">
+
+    <!-- ═══ Hero（单列标题+导读） ═══ -->
+    <article class="cv-hero-card">
+      <span class="cv-badge">会议纪要</span>
+      <div class="cv-kicker">2026.03.26（周四）14:00 - 15:30</div>
+      <h1 class="cv-title">MEP SDK 技术对齐会</h1>
+      <p class="cv-subtitle">API 重构收尾、热升级方案和仿真测试进度同步</p>
+      <div class="cv-meta-row">
+        <span class="cv-chip">📍 线上（腾讯会议）</span>
+        <span class="cv-chip">⏱ 90 分钟</span>
+        <span class="cv-chip">📝 主持：侯翔蔡</span>
+        <span class="cv-chip">👥 侯翔蔡、张三、李四、王五、赵六</span>
+      </div>
+      <div class="cv-callout cv-callout-success" style="margin-top:16px;">
+        <div class="cv-callout-title">✅ 3 项决议达成</div>
+        热升级采用「双镜像方案」· Session 表 API 锁定发布 · 仿真环境切换 226 节点
+      </div>
+    </article>
+
+    <main class="cv-content">
+
+      <!-- ═══ Agenda ═══ -->
+      <section id="agenda" class="cv-section">
+        <div class="cv-section-head">
+          <h2>议题概要</h2>
+          <p>本次会议讨论 4 个核心议题</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-tabs">
+            <div class="cv-tab-nav">
+              <button class="cv-tab-btn cv-tab-btn-active" data-tab="topic1">① API 重构收尾</button>
+              <button class="cv-tab-btn" data-tab="topic2">② 热升级方案</button>
+              <button class="cv-tab-btn" data-tab="topic3">③ 仿真测试进度</button>
+              <button class="cv-tab-btn" data-tab="topic4">④ Q2 规划预告</button>
+            </div>
+            <div class="cv-tab-panel cv-tab-panel-active" data-tab-id="topic1" data-tab-label="① API 重构收尾">
+              <p><strong>汇报人：</strong>侯翔蔡</p>
+              <p>Session 表、dev_entry、vport_property 三大核心 API 重构已全部完成。UT 覆盖率从 62% 提升至 98%。建议本周锁定 API 接口，发布 v1.2.0。</p>
+              <div class="cv-callout cv-callout-success">
+                <div class="cv-callout-title">决议</div>
+                Session 表 API 接口正式锁定，v1.2.0 定于 W14 发布。后续接口变更需走 RFC 流程。
+              </div>
+            </div>
+            <div class="cv-tab-panel" data-tab-id="topic2" data-tab-label="② 热升级方案">
+              <p><strong>汇报人：</strong>张三</p>
+              <p>当前热升级遇到新旧版本 IMEM 格式不兼容问题。提出两种方案：</p>
+              <ul>
+                <li><strong>方案 A — 双镜像切换：</strong>同时加载新旧 IMEM，通过 bank 切换实现无损升级。优点是可靠性高，缺点是占用双倍 IMEM 空间。</li>
+                <li><strong>方案 B — 格式兼容层：</strong>在新版微码中增加旧格式解析逻辑。优点是节省空间，缺点是增加代码复杂度。</li>
+              </ul>
+              <div class="cv-callout cv-callout-success">
+                <div class="cv-callout-title">决议</div>
+                采用方案 A（双镜像切换）。32KB IMEM 空间充足，可靠性优先。张三负责出详细设计文档，W14 评审。
+              </div>
+            </div>
+            <div class="cv-tab-panel" data-tab-id="topic3" data-tab-label="③ 仿真测试进度">
+              <p><strong>汇报人：</strong>李四</p>
+              <p>29.20.232.79 仿真环境本周出现 3 次崩溃，根因是 SoC 固件 bug。运维建议切换到 29.98.177.226 正式环境继续测试。</p>
+              <div class="cv-callout cv-callout-warning">
+                <div class="cv-callout-title">⚠️ 风险</div>
+                226 环境当前负载较高，需要协调排期。预计下周三可用。
+              </div>
+              <div class="cv-callout cv-callout-success">
+                <div class="cv-callout-title">决议</div>
+                切换到 226 节点。李四协调运维确认可用时间，本周五前反馈。
+              </div>
+            </div>
+            <div class="cv-tab-panel" data-tab-id="topic4" data-tab-label="④ Q2 规划预告">
+              <p><strong>汇报人：</strong>王五</p>
+              <p>Q2 重点方向：性能优化（目标 10Mpps 转发基线）、CT 状态管理增强、多 Quark 负载均衡。具体排期 W15 定稿。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Discussion Timeline ═══ -->
+      <section id="discussion" class="cv-section">
+        <div class="cv-section-head">
+          <h2>讨论要点时间线</h2>
+          <p>按时间顺序记录关键讨论内容</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-timeline">
+            <div class="cv-timeline-item">
+              <div class="cv-timeline-dot"></div>
+              <div class="cv-timeline-time">14:05</div>
+              <div class="cv-timeline-title">API 接口锁定讨论</div>
+              <div class="cv-timeline-desc">侯翔蔡展示了 Session 表 API 的 UT 覆盖报告。赵六提出 <code>jnet_session_tbl_add</code> 的错误码需要补充 JNET_ERR_RESOURCE 场景。侯翔蔡当场确认，已在 UT 中补充。</div>
+            </div>
+            <div class="cv-timeline-item">
+              <div class="cv-timeline-dot cv-timeline-dot-warning"></div>
+              <div class="cv-timeline-time">14:25</div>
+              <div class="cv-timeline-title">热升级方案争论</div>
+              <div class="cv-timeline-desc">张三和赵六就双镜像方案的 IMEM 空间消耗展开讨论。最终确认 Quark 有 32KB IMEM（8K 条指令），双镜像仅需 16KB/Quark，空间充足。</div>
+            </div>
+            <div class="cv-timeline-item">
+              <div class="cv-timeline-dot cv-timeline-dot-warning"></div>
+              <div class="cv-timeline-time">14:50</div>
+              <div class="cv-timeline-title">仿真环境问题升级</div>
+              <div class="cv-timeline-desc">李四反馈 79 环境 SoC 固件 bug 导致 DPE 挂死，运维短期无法修复。团队决定切换到 226 环境，但需要协调排期。</div>
+            </div>
+            <div class="cv-timeline-item">
+              <div class="cv-timeline-dot cv-timeline-dot-success"></div>
+              <div class="cv-timeline-time">15:10</div>
+              <div class="cv-timeline-title">Q2 方向初步对齐</div>
+              <div class="cv-timeline-desc">王五介绍了 Q2 三大方向。团队对性能基线目标 10Mpps 有共识，CT 状态管理优先级待 W15 讨论。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Action Items ═══ -->
+      <section id="actions" class="cv-section">
+        <div class="cv-section-head">
+          <h2>待办跟踪</h2>
+          <p>会议产生的 Action Items，可排序查看</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-table-wrap">
+            <table class="cv-table">
+              <thead>
+                <tr>
+                  <th class="cv-table-sortable">事项</th>
+                  <th class="cv-table-sortable">负责人</th>
+                  <th class="cv-table-sortable">截止日期</th>
+                  <th class="cv-table-sortable">优先级</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>发布 MEP SDK v1.2.0</td>
+                  <td>侯翔蔡</td>
+                  <td>2026-04-03</td>
+                  <td>P0</td>
+                  <td><span class="cv-tag cv-tag-accent">进行中</span></td>
+                </tr>
+                <tr>
+                  <td>双镜像热升级设计文档</td>
+                  <td>张三</td>
+                  <td>2026-04-01</td>
+                  <td>P0</td>
+                  <td><span class="cv-tag cv-tag-warning">待启动</span></td>
+                </tr>
+                <tr>
+                  <td>协调 226 仿真环境排期</td>
+                  <td>李四</td>
+                  <td>2026-03-28</td>
+                  <td>P0</td>
+                  <td><span class="cv-tag cv-tag-accent">进行中</span></td>
+                </tr>
+                <tr>
+                  <td>补充 Session 表错误码 UT</td>
+                  <td>侯翔蔡</td>
+                  <td>2026-03-28</td>
+                  <td>P1</td>
+                  <td><span class="cv-tag cv-tag-success">已完成</span></td>
+                </tr>
+                <tr>
+                  <td>Q2 规划详细排期</td>
+                  <td>王五</td>
+                  <td>2026-04-10</td>
+                  <td>P1</td>
+                  <td><span class="cv-tag cv-tag-warning">待启动</span></td>
+                </tr>
+                <tr>
+                  <td>热升级方案评审会</td>
+                  <td>张三</td>
+                  <td>2026-04-02</td>
+                  <td>P1</td>
+                  <td><span class="cv-tag cv-tag-warning">待启动</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Details (Accordion) ═══ -->
+      <section id="decisions" class="cv-section">
+        <div class="cv-section-head">
+          <h2>决议详情</h2>
+          <p>展开查看每项决议的背景和细节</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-accordion">
+            <div class="cv-collapse cv-collapse-open">
+              <div class="cv-collapse-trigger">
+                <span class="cv-collapse-title">✅ 决议一：Session 表 API 锁定发布 v1.2.0</span>
+                <span class="cv-collapse-icon">▸</span>
+              </div>
+              <div class="cv-collapse-body">
+                <div class="cv-collapse-body-inner">
+                  <p><strong>背景：</strong>Session 表、dev_entry、vport_property 三大核心 API 经过 3 周重构，所有 UT 通过。</p>
+                  <p><strong>决议内容：</strong>接口正式锁定为 v1.2.0。后续任何接口变更必须走 RFC 审批流程。</p>
+                  <p><strong>负责人：</strong>侯翔蔡 &nbsp;|&nbsp; <strong>截止：</strong>2026-04-03</p>
+                </div>
+              </div>
+            </div>
+            <div class="cv-collapse">
+              <div class="cv-collapse-trigger">
+                <span class="cv-collapse-title">✅ 决议二：热升级采用双镜像方案</span>
+                <span class="cv-collapse-icon">▸</span>
+              </div>
+              <div class="cv-collapse-body">
+                <div class="cv-collapse-body-inner">
+                  <p><strong>背景：</strong>新旧 IMEM 格式不兼容，需要设计平滑过渡方案。</p>
+                  <p><strong>决议内容：</strong>采用方案 A（双镜像切换），利用 Quark 32KB IMEM 空间同时保留新旧镜像，通过 bank 切换实现无损升级。</p>
+                  <p><strong>否决方案：</strong>方案 B（格式兼容层）因增加代码复杂度被否决。</p>
+                  <p><strong>负责人：</strong>张三 &nbsp;|&nbsp; <strong>评审日期：</strong>2026-04-02</p>
+                </div>
+              </div>
+            </div>
+            <div class="cv-collapse">
+              <div class="cv-collapse-trigger">
+                <span class="cv-collapse-title">✅ 决议三：仿真环境切换至 226 节点</span>
+                <span class="cv-collapse-icon">▸</span>
+              </div>
+              <div class="cv-collapse-body">
+                <div class="cv-collapse-body-inner">
+                  <p><strong>背景：</strong>79 仿真环境因 SoC 固件 bug 频繁崩溃，影响集成测试进度。</p>
+                  <p><strong>决议内容：</strong>切换到 29.98.177.226 正式环境。需协调运维确认可用时间窗口。</p>
+                  <p><strong>风险：</strong>226 环境当前负载较高，需排队等待。</p>
+                  <p><strong>负责人：</strong>李四 &nbsp;|&nbsp; <strong>反馈截止：</strong>2026-03-28</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Next Meeting ═══ -->
+      <div class="cv-callout cv-callout-info" style="margin-top: 0;">
+        <div class="cv-callout-title">📅 下次会议</div>
+        <strong>热升级方案评审会</strong> · 2026-04-02（周四）14:00 · 参会人：全组 + 架构组 reviewer · 会前准备：张三提前发出设计文档
+      </div>
+
+    </main>
+  </div>
+
+  <footer class="cv-footer">
+    <div class="cv-footer-card">TNIC / XLine Team · 会议纪要 · 2026-03-26 · Powered by Context Visualizer v4</div>
+  </footer>
+
+  <!-- interactive.js inline -->
+  <script>
+(function(){
+  'use strict';
+  function initTabs(){
+    document.querySelectorAll('.cv-tabs').forEach(function(c){
+      var btns=c.querySelectorAll('.cv-tab-btn'), panels=c.querySelectorAll('.cv-tab-panel');
+      btns.forEach(function(b){
+        b.addEventListener('click',function(){
+          var id=b.getAttribute('data-tab');
+          btns.forEach(function(x){x.classList.remove('cv-tab-btn-active');});
+          b.classList.add('cv-tab-btn-active');
+          panels.forEach(function(p){p.classList.toggle('cv-tab-panel-active',p.getAttribute('data-tab-id')===id);});
+        });
+      });
+    });
+  }
+  function initCollapse(){
+    document.querySelectorAll('.cv-collapse-trigger').forEach(function(t){
+      t.addEventListener('click',function(){
+        var c=t.closest('.cv-collapse');
+        if(c){c.classList.toggle('cv-collapse-open');var b=c.querySelector('.cv-collapse-body');if(b){b.style.maxHeight=c.classList.contains('cv-collapse-open')?b.scrollHeight+'px':'0';}}
+      });
+    });
+    document.querySelectorAll('.cv-collapse.cv-collapse-open').forEach(function(c){
+      var b=c.querySelector('.cv-collapse-body');if(b)b.style.maxHeight=b.scrollHeight+'px';
+    });
+  }
+  function initTableSort(){
+    document.querySelectorAll('.cv-table-sortable').forEach(function(th){
+      if(!th.querySelector('.cv-sort-icon')){var i=document.createElement('span');i.className='cv-sort-icon';i.textContent=' ↕';th.appendChild(i);}
+      th.style.cursor='pointer';th.style.userSelect='none';
+      th.addEventListener('click',function(){
+        var table=th.closest('table');if(!table)return;var tbody=table.querySelector('tbody');if(!tbody)return;
+        var ci=Array.from(th.parentNode.children).indexOf(th),st=th.getAttribute('data-sort-type')||'string',cd=th.getAttribute('data-sort-dir')||'none',nd=cd==='asc'?'desc':'asc';
+        table.querySelectorAll('.cv-table-sortable').forEach(function(h){h.setAttribute('data-sort-dir','none');h.classList.remove('cv-sort-asc','cv-sort-desc');var ic=h.querySelector('.cv-sort-icon');if(ic)ic.textContent=' ↕';});
+        th.setAttribute('data-sort-dir',nd);th.classList.add(nd==='asc'?'cv-sort-asc':'cv-sort-desc');var si=th.querySelector('.cv-sort-icon');if(si)si.textContent=nd==='asc'?' ↑':' ↓';
+        var rows=Array.from(tbody.querySelectorAll('tr'));
+        rows.sort(function(a,b){var ac=a.children[ci],bc=b.children[ci];if(!ac||!bc)return 0;var at=ac.textContent.trim(),bt=bc.textContent.trim();if(st==='number'){return nd==='asc'?(parseFloat(at.replace(/[^0-9.\-]/g,''))||0)-(parseFloat(bt.replace(/[^0-9.\-]/g,''))||0):(parseFloat(bt.replace(/[^0-9.\-]/g,''))||0)-(parseFloat(at.replace(/[^0-9.\-]/g,''))||0);}return nd==='asc'?at.localeCompare(bt,'zh-CN'):-at.localeCompare(bt,'zh-CN');});
+        rows.forEach(function(r){tbody.appendChild(r);});
+      });
+    });
+  }
+  function initAccordion(){
+    document.querySelectorAll('.cv-accordion').forEach(function(a){
+      a.addEventListener('click',function(e){
+        var t=e.target.closest('.cv-collapse-trigger');if(!t)return;var cur=t.closest('.cv-collapse');
+        a.querySelectorAll('.cv-collapse').forEach(function(c){if(c!==cur&&c.classList.contains('cv-collapse-open')){c.classList.remove('cv-collapse-open');var b=c.querySelector('.cv-collapse-body');if(b)b.style.maxHeight='0';}});
+      });
+    });
+  }
+  function init(){initTabs();initCollapse();initTableSort();initAccordion();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+  </script>
+</body>
+</html>

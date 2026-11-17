@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "6063aab9-c56a-4541-b974-f8a2730fb9d0",
+  "path": "responsible-ai-guardrails",
+  "path_key": "responsible-ai-guardrails",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

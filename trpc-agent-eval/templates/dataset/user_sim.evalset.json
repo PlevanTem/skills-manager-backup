@@ -1,0 +1,15 @@
+{
+  "eval_set_id": "my_user_sim_set",
+  "name": "模拟用户多轮评测集",
+  "description": "conversation_scenario 驱动模拟用户动态对话：starting_prompt 为首条用户消息，conversation_plan 指导模拟用户的后续行为。依赖后端实现 LLM 模拟用户（部分版本仅支持静态多轮 conversation，见 multiturn.evalset.json）；使用前请用 discover.py 确认运行时是否支持，否则改用静态多轮。",
+  "eval_cases": [
+    {
+      "eval_id": "user_sim_001",
+      "conversation_scenario": {
+        "starting_prompt": "我想订一张明天去上海的机票。",
+        "conversation_plan": "扮演一位赶时间的商务旅客：先只给出目的地和日期；当 Agent 追问时，再逐步提供出发城市（北京）、偏好（上午航班、靠窗）。若 Agent 给出可下单方案则确认；全程不要主动透露预算。"
+      },
+      "session_input": { "app_name": "my_agent", "user_id": "user", "state": {} }
+    }
+  ]
+}

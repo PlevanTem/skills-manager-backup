@@ -1,0 +1,24 @@
+{
+  "metric_name": "llm_rubric_reference_critic",
+  "threshold": 0.8,
+  "criterion": {
+    "llmJudge": {
+      "judge_model": {
+        "provider_name": "openai",
+        "model_name": "${MODEL:glm_flash}",
+        "base_url": "${MODEL:glm_flash}",
+        "api_key": "${MODEL:glm_flash}",
+        "generation_config": { "temperature": 0.0 }
+      },
+      "rubrics": [
+        {
+          "id": "consistent_with_reference",
+          "content": { "text": "回答与参考答案在关键事实上一致，无矛盾" },
+          "description": "与参考一致",
+          "type": "REFERENCE_CRITIC"
+        }
+      ],
+      "models_aggregator": "all_pass"
+    }
+  }
+}

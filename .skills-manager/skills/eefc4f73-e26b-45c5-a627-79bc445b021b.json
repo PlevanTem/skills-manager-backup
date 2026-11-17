@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "eefc4f73-e26b-45c5-a627-79bc445b021b",
+  "path": "blue-ocean-strategy",
+  "path_key": "blue-ocean-strategy",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

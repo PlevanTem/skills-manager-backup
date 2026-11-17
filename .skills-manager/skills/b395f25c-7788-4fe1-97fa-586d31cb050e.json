@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b395f25c-7788-4fe1-97fa-586d31cb050e",
+  "path": "stakeholder-map",
+  "path_key": "stakeholder-map",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "metric_name": "llm_final_response",
+  "threshold": 0.8,
+  "criterion": {
+    "llmJudge": {
+      "call_judge": { "name": "<judge_agent_id>" },
+      "models_aggregator": "all_pass"
+    }
+  }
+}

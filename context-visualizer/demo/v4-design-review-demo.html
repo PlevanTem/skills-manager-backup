@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEP 热升级双镜像方案 — 技术评审</title>
+  <style>
+/* === Theme: default-light with brand customization === */
+:root {
+  --bg: #f6f8fb;
+  --bg-soft: #eef3f8;
+  --panel: #ffffff;
+  --panel-soft: #f7f9fc;
+  --line: #d7dfeb;
+  --text: #162033;
+  --muted: #61738f;
+  --accent: #8b5cf6;
+  --accent-soft: #f5f3ff;
+  --success: #0f9f6e;
+  --warning: #b7791f;
+  --danger: #dc2626;
+  --neutral: #64748b;
+  --max: 1180px;
+  --radius: 20px;
+  --shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --brand-color: #8b5cf6;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  background:
+    radial-gradient(circle at top, rgba(139, 92, 246, 0.08), transparent 28%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+.cv-topbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(16px); background: rgba(255, 255, 255, 0.88); border-bottom: 1px solid var(--line); }
+.cv-topbar-inner, .cv-page, .cv-footer { max-width: var(--max); margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+.cv-topbar-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.cv-brand { font-weight: 800; letter-spacing: 0.03em; color: var(--accent); white-space: nowrap; }
+.cv-nav { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.cv-nav::-webkit-scrollbar { display: none; }
+.cv-nav a { white-space: nowrap; padding: 8px 12px; border-radius: 999px; font-size: 13px; color: var(--muted); border: 1px solid transparent; }
+.cv-nav a:hover { color: var(--text); border-color: rgba(139,92,246,0.14); background: var(--accent-soft); }
+.cv-page { padding-top: 42px; padding-bottom: 40px; }
+.cv-footer { padding-top: 10px; padding-bottom: 56px; color: var(--muted); font-size: 13px; }
+.cv-footer-card { padding: 16px 18px; border-radius: 18px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+
+/* === Components (精简版) === */
+.cv-hero-card, .cv-section, .cv-summary-box { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.cv-hero-card { padding: 34px 32px; position: relative; overflow: hidden; }
+.cv-hero-card::after { content: ""; position: absolute; right: -56px; bottom: -86px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(139,92,246,0.12), transparent 68%); pointer-events: none; }
+.cv-badge { display: inline-flex; align-items: center; padding: 7px 14px; border-radius: 999px; background: var(--accent-soft); border: 1px solid rgba(139,92,246,0.14); color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.cv-kicker { margin-top: 14px; color: var(--accent); font-size: 13px; font-weight: 700; letter-spacing: 0.03em; }
+.cv-title { margin: 18px 0 12px; font-size: clamp(28px, 5vw, 46px); line-height: 1.1; letter-spacing: -0.03em; }
+.cv-subtitle { color: var(--muted); font-size: 18px; margin: 0 0 16px; }
+.cv-meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.cv-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-soft); color: var(--muted); font-size: 12px; font-weight: 700; }
+
+.cv-content { display: grid; gap: 22px; margin-top: 24px; }
+.cv-section { padding: 26px 24px; }
+.cv-section-head { margin-bottom: 16px; }
+.cv-section-head h2 { margin: 0 0 6px; font-size: 24px; }
+.cv-section-head p { margin: 0; color: var(--muted); font-size: 14px; }
+.cv-section-body p { margin: 0 0 12px; }
+.cv-section-body code { padding: 2px 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); font-size: 0.92em; }
+.cv-section-body ul { margin: 0; padding-left: 18px; }
+.cv-section-body li + li { margin-top: 8px; }
+
+/* Callout */
+.cv-callout { margin: 16px 0; padding: 14px 18px; border-radius: 16px; border: 1px solid rgba(139,92,246,0.14); background: var(--accent-soft); color: var(--text); line-height: 1.6; }
+.cv-callout-title { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+.cv-callout-info .cv-callout-title { color: var(--accent); }
+.cv-callout-success { border-color: rgba(15,159,110,0.2); background: rgba(15,159,110,0.08); }
+.cv-callout-success .cv-callout-title { color: var(--success); }
+.cv-callout-warning { border-color: rgba(183,121,31,0.2); background: rgba(183,121,31,0.08); }
+.cv-callout-warning .cv-callout-title { color: var(--warning); }
+.cv-callout-danger { border-color: rgba(220,38,38,0.2); background: rgba(220,38,38,0.08); }
+.cv-callout-danger .cv-callout-title { color: var(--danger); }
+
+/* Tags */
+.cv-tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.cv-tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid var(--line); background: var(--panel-soft); color: var(--muted); }
+.cv-tag-accent { color: var(--accent); border-color: rgba(139,92,246,0.2); background: var(--accent-soft); }
+.cv-tag-success { color: var(--success); border-color: rgba(15,159,110,0.2); background: rgba(15,159,110,0.08); }
+
+/* Metric */
+.cv-metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 20px 0; }
+.cv-metric-card { padding: 20px; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); text-align: center; }
+.cv-metric-value { font-size: clamp(28px, 4vw, 42px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; color: var(--accent); }
+.cv-metric-value-success { color: var(--success); }
+.cv-metric-value-warning { color: var(--warning); }
+.cv-metric-value-danger { color: var(--danger); }
+.cv-metric-label { margin-top: 6px; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.cv-metric-sub { margin-top: 4px; font-size: 12px; color: var(--muted); }
+
+/* Comparison */
+.cv-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.cv-comparison-col { padding: 20px; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.cv-comparison-header { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+.cv-comparison-before .cv-comparison-header { color: var(--danger); border-color: var(--danger); }
+.cv-comparison-after .cv-comparison-header { color: var(--success); border-color: var(--success); }
+.cv-comparison-col ul { margin: 0; padding-left: 18px; }
+.cv-comparison-col li + li { margin-top: 8px; }
+
+/* Table */
+.cv-table-wrap { margin: 16px 0; overflow-x: auto; border-radius: 16px; border: 1px solid var(--line); background: var(--panel); box-shadow: var(--shadow); }
+.cv-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.cv-table thead { background: var(--panel-soft); border-bottom: 2px solid var(--line); }
+.cv-table th { padding: 12px 16px; text-align: left; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; }
+.cv-table td { padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--text); vertical-align: top; }
+.cv-table tbody tr:last-child td { border-bottom: none; }
+.cv-table tbody tr:hover { background: var(--panel-soft); }
+
+/* Risk Matrix */
+.cv-risk-matrix { margin: 20px 0; padding: 20px; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.cv-risk-matrix-title { font-size: 13px; font-weight: 800; color: var(--accent); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 16px; }
+.cv-risk-grid { display: grid; grid-template-columns: auto repeat(var(--risk-cols, 3), 1fr); grid-template-rows: repeat(var(--risk-rows, 3), 1fr) auto; gap: 4px; }
+.cv-risk-ylabel { writing-mode: vertical-lr; transform: rotate(180deg); font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; text-align: center; padding: 8px 4px; }
+.cv-risk-xlabel { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; padding: 8px 0; }
+.cv-risk-cell { min-height: 60px; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center; }
+.cv-risk-cell-low { background: rgba(15, 159, 110, 0.08); }
+.cv-risk-cell-medium { background: rgba(183, 121, 31, 0.08); }
+.cv-risk-cell-high { background: rgba(220, 38, 38, 0.08); }
+.cv-risk-cell-critical { background: rgba(220, 38, 38, 0.16); }
+.cv-risk-item { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); color: var(--text); text-align: center; white-space: nowrap; }
+
+/* Steps */
+.cv-steps { margin: 20px 0; }
+.cv-step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.cv-step:last-child { border-bottom: none; }
+.cv-step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+.cv-step-content { flex: 1; min-width: 0; }
+.cv-step-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.cv-step-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* Mermaid container */
+.cv-mermaid { margin: 20px 0; padding: 24px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); text-align: center; overflow-x: auto; }
+.cv-mermaid-title { font-size: 13px; font-weight: 800; color: var(--accent); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 16px; text-align: left; }
+
+/* Code Block */
+.cv-code-block { margin: 16px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: var(--panel-soft); }
+.cv-code-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); font-size: 12px; font-weight: 700; color: var(--muted); }
+.cv-code-lang { text-transform: uppercase; letter-spacing: 0.05em; }
+.cv-code-block pre { margin: 0; padding: 16px 18px; overflow-x: auto; font-family: "SF Mono", "Fira Code", monospace; font-size: 13px; line-height: 1.6; color: var(--text); tab-size: 4; }
+.cv-code-block code { background: none; border: none; padding: 0; font-size: inherit; }
+
+/* Print */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .cv-topbar { display: none !important; }
+  body { background: #fff !important; }
+  .cv-hero-card, .cv-section, .cv-comparison-col, .cv-metric-card, .cv-risk-matrix { box-shadow: none !important; break-inside: avoid; }
+}
+
+/* Responsive */
+@media (max-width: 920px) {
+  .cv-comparison { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body class="theme-default-light cv-brand-custom">
+
+  <header class="cv-topbar">
+    <div class="cv-topbar-inner">
+      <div class="cv-brand">TNIC · XLine Team</div>
+      <nav class="cv-nav">
+        <a href="#background">背景</a>
+        <a href="#architecture">架构</a>
+        <a href="#comparison">方案对比</a>
+        <a href="#risk">风险</a>
+        <a href="#conclusion">结论</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="cv-page">
+
+    <!-- ═══ Hero（单列标题+导读） ═══ -->
+    <article class="cv-hero-card">
+      <span class="cv-badge">方案评审</span>
+      <div class="cv-kicker">2026.04.02 · RFC-2026-013</div>
+      <h1 class="cv-title">MEP 热升级双镜像方案</h1>
+      <p class="cv-subtitle">解决新旧 IMEM 格式不兼容，实现无损在线升级</p>
+      <div class="cv-meta-row">
+        <span class="cv-chip">📝 作者：张三</span>
+        <span class="cv-chip">👥 评审人：侯翔蔡、赵六、架构组</span>
+        <span class="cv-chip">📅 2026-04-02</span>
+      </div>
+      <div class="cv-callout cv-callout-success" style="margin-top:16px;">
+        <div class="cv-callout-title">✅ 方案通过</div>
+        双镜像切换方案获全票通过，可靠性优先，IMEM 空间充足。
+      </div>
+    </article>
+
+    <main class="cv-content">
+
+      <!-- ═══ Background ═══ -->
+      <section id="background" class="cv-section">
+        <div class="cv-section-head">
+          <h2>背景与目标</h2>
+          <p>为什么需要热升级方案</p>
+        </div>
+        <div class="cv-section-body">
+          <p>MEP 微码更新频率较高（约每 2 周一次），当前升级流程需要停流，影响生产环境稳定性。新版微码引入了 CT 状态域段，导致 IMEM 格式与旧版不兼容，无法直接覆盖升级。</p>
+          <div class="cv-metric-row">
+            <div class="cv-metric-card">
+              <div class="cv-metric-value cv-metric-value-danger">30s</div>
+              <div class="cv-metric-label">当前停流时间</div>
+              <div class="cv-metric-sub">每次升级影响</div>
+            </div>
+            <div class="cv-metric-card">
+              <div class="cv-metric-value cv-metric-value-success">&lt;1ms</div>
+              <div class="cv-metric-label">目标切换延迟</div>
+              <div class="cv-metric-sub">无损切换</div>
+            </div>
+            <div class="cv-metric-card">
+              <div class="cv-metric-value">32KB</div>
+              <div class="cv-metric-label">Quark IMEM</div>
+              <div class="cv-metric-sub">8K 条指令</div>
+            </div>
+            <div class="cv-metric-card">
+              <div class="cv-metric-value">4</div>
+              <div class="cv-metric-label">Quark 数量</div>
+              <div class="cv-metric-sub">每方向 4 个</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Architecture ═══ -->
+      <section id="architecture" class="cv-section">
+        <div class="cv-section-head">
+          <h2>方案概述</h2>
+          <p>双镜像切换架构</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-mermaid">
+            <div class="cv-mermaid-title">热升级流程</div>
+            <pre style="text-align:left; font-size:13px; color:var(--muted); line-height:1.8; font-family:monospace;">
+┌──────────────────────────────────────────────────────────────┐
+│                    热升级流程 (7 步)                          │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ① Mask 背景线程      ──→  停止新报文调度到目标 Quark         │
+│          │                                                    │
+│  ② Quark 状态 Check   ──→  等待所有在飞报文处理完成           │
+│          │                                                    │
+│  ③ CME Disable         ──→  停止 CME 线程                    │
+│          │                                                    │
+│  ④ Load 新 IMEM        ──→  加载到 Bank B（当前运行 Bank A）   │
+│     Load 新 DTCM       ──→  更新 rodata                      │
+│          │                                                    │
+│  ⑤ 配置 CSR            ──→  更新 start_pc、hash_seed 等      │
+│          │                                                    │
+│  ⑥ CME Enable          ──→  重新使能线程，指向 Bank B         │
+│          │                                                    │
+│  ⑦ Unmask 背景线程     ──→  恢复报文调度                     │
+│                                                              │
+│  ┌─────────┐  ┌─────────┐                                    │
+│  │ Bank A  │  │ Bank B  │   ← 双 Bank 同时存在               │
+│  │ (旧版)  │  │ (新版)  │   ← 切换后 Bank A 可用于下次升级    │
+│  └─────────┘  └─────────┘                                    │
+└──────────────────────────────────────────────────────────────┘</pre>
+          </div>
+          <p>核心思路：利用 IMEM 的 Bank 机制，将新版镜像加载到备用 Bank，通过 CSR 切换指令入口地址实现瞬时切换。整个过程对已在处理的报文无影响。</p>
+        </div>
+      </section>
+
+      <!-- ═══ Comparison ═══ -->
+      <section id="comparison" class="cv-section">
+        <div class="cv-section-head">
+          <h2>方案对比</h2>
+          <p>双镜像 vs 格式兼容层</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-comparison">
+            <div class="cv-comparison-col cv-comparison-after">
+              <div class="cv-comparison-header">方案 A: 双镜像切换 ✅ 推荐</div>
+              <ul>
+                <li><strong>原理：</strong>新旧 IMEM 各占一个 Bank，通过 CSR 切换</li>
+                <li><strong>空间消耗：</strong>16KB/Quark（总 32KB 的 50%）</li>
+                <li><strong>切换延迟：</strong>&lt; 1ms（仅 CSR 写入）</li>
+                <li><strong>回滚能力：</strong>秒级回滚（切回旧 Bank）</li>
+                <li><strong>代码改动：</strong>仅控制面升级流程，微码零改动</li>
+                <li><strong>风险：</strong>IMEM 空间减半，需确保微码 &lt; 4K 条指令</li>
+              </ul>
+            </div>
+            <div class="cv-comparison-col cv-comparison-before">
+              <div class="cv-comparison-header">方案 B: 格式兼容层 ✗ 否决</div>
+              <ul>
+                <li><strong>原理：</strong>新版微码内嵌旧格式解析逻辑</li>
+                <li><strong>空间消耗：</strong>仅占额外 ~200 条指令</li>
+                <li><strong>切换延迟：</strong>~30s（需停流重加载）</li>
+                <li><strong>回滚能力：</strong>需要重新加载旧版镜像</li>
+                <li><strong>代码改动：</strong>微码增加兼容逻辑，增加复杂度</li>
+                <li><strong>风险：</strong>每次新增域段都要维护兼容逻辑</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="cv-table-wrap">
+            <table class="cv-table">
+              <thead>
+                <tr>
+                  <th>对比维度</th>
+                  <th>方案 A (双镜像)</th>
+                  <th>方案 B (兼容层)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>可靠性</td>
+                  <td><strong style="color:var(--success)">★★★★★</strong> 物理隔离，互不影响</td>
+                  <td><strong style="color:var(--warning)">★★★</strong> 兼容逻辑可能引入 bug</td>
+                </tr>
+                <tr>
+                  <td>切换速度</td>
+                  <td><strong style="color:var(--success)">&lt; 1ms</strong></td>
+                  <td><strong style="color:var(--danger)">~30s</strong></td>
+                </tr>
+                <tr>
+                  <td>资源消耗</td>
+                  <td><strong style="color:var(--warning)">50% IMEM</strong></td>
+                  <td><strong style="color:var(--success)">~5% IMEM</strong></td>
+                </tr>
+                <tr>
+                  <td>维护成本</td>
+                  <td><strong style="color:var(--success)">低</strong> 无需改微码</td>
+                  <td><strong style="color:var(--danger)">高</strong> 每版本都要更新兼容逻辑</td>
+                </tr>
+                <tr>
+                  <td>回滚能力</td>
+                  <td><strong style="color:var(--success)">秒级</strong></td>
+                  <td><strong style="color:var(--warning)">分钟级</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Risk Matrix ═══ -->
+      <section id="risk" class="cv-section">
+        <div class="cv-section-head">
+          <h2>风险评估</h2>
+          <p>方案 A 的风险矩阵</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-risk-matrix">
+            <div class="cv-risk-matrix-title">风险矩阵（影响 × 概率）</div>
+            <div class="cv-risk-grid" style="--risk-cols: 3; --risk-rows: 3;">
+              <div class="cv-risk-ylabel" style="grid-row: 1/4;">影响程度 →</div>
+              <div class="cv-risk-cell cv-risk-cell-medium" style="grid-row:1;grid-column:2;">
+                <span class="cv-risk-item">IMEM 空间不足</span>
+              </div>
+              <div class="cv-risk-cell cv-risk-cell-high" style="grid-row:1;grid-column:3;"></div>
+              <div class="cv-risk-cell cv-risk-cell-critical" style="grid-row:1;grid-column:4;"></div>
+              <div class="cv-risk-cell cv-risk-cell-low" style="grid-row:2;grid-column:2;">
+                <span class="cv-risk-item">Bank 切换时序</span>
+              </div>
+              <div class="cv-risk-cell cv-risk-cell-medium" style="grid-row:2;grid-column:3;">
+                <span class="cv-risk-item">CSR 配置错误</span>
+              </div>
+              <div class="cv-risk-cell cv-risk-cell-high" style="grid-row:2;grid-column:4;"></div>
+              <div class="cv-risk-cell cv-risk-cell-low" style="grid-row:3;grid-column:2;">
+                <span class="cv-risk-item">DTCM 不同步</span>
+              </div>
+              <div class="cv-risk-cell cv-risk-cell-low" style="grid-row:3;grid-column:3;"></div>
+              <div class="cv-risk-cell cv-risk-cell-medium" style="grid-row:3;grid-column:4;"></div>
+              <div></div>
+              <div class="cv-risk-xlabel" style="grid-column:2;">低概率</div>
+              <div class="cv-risk-xlabel" style="grid-column:3;">中概率</div>
+              <div class="cv-risk-xlabel" style="grid-column:4;">高概率</div>
+            </div>
+          </div>
+
+          <div class="cv-callout cv-callout-warning">
+            <div class="cv-callout-title">⚠️ 最大风险：IMEM 空间限制</div>
+            双镜像方案将可用 IMEM 从 8K 条指令减至 4K 条。当前微码约 3.2K 条指令，剩余空间 ~20%。<strong>缓解措施：</strong>设置编译时指令数检查，超过 3.8K 条自动告警。
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Conclusion ═══ -->
+      <section id="conclusion" class="cv-section">
+        <div class="cv-section-head">
+          <h2>推荐方案与后续计划</h2>
+          <p>评审结论和 Action Items</p>
+        </div>
+        <div class="cv-section-body">
+          <div class="cv-callout cv-callout-success">
+            <div class="cv-callout-title">✅ 推荐方案 A：双镜像切换</div>
+            综合可靠性（9.2分）、可维护性（8.8分）和实际空间余量（当前仅用 40% IMEM），方案 A 全票通过。
+          </div>
+
+          <div class="cv-steps">
+            <div class="cv-step">
+              <div class="cv-step-num">1</div>
+              <div class="cv-step-content">
+                <div class="cv-step-title">完成详细设计文档</div>
+                <div class="cv-step-desc">包括 Bank 管理 API、CSR 切换时序、异常恢复流程。<strong>负责人：</strong>张三 · <strong>截止：</strong>2026-04-07</div>
+              </div>
+            </div>
+            <div class="cv-step">
+              <div class="cv-step-num">2</div>
+              <div class="cv-step-content">
+                <div class="cv-step-title">控制面升级 API 开发</div>
+                <div class="cv-step-desc">实现 <code>mep_hot_upgrade_start/switch/rollback</code> 三个核心 API。<strong>负责人：</strong>张三 · <strong>截止：</strong>2026-04-14</div>
+              </div>
+            </div>
+            <div class="cv-step">
+              <div class="cv-step-num">3</div>
+              <div class="cv-step-content">
+                <div class="cv-step-title">UT + 仿真验证</div>
+                <div class="cv-step-desc">覆盖正常升级、异常回滚、空间边界三类场景。<strong>负责人：</strong>李四 · <strong>截止：</strong>2026-04-21</div>
+              </div>
+            </div>
+            <div class="cv-step">
+              <div class="cv-step-num">4</div>
+              <div class="cv-step-content">
+                <div class="cv-step-title">编译时指令数检查</div>
+                <div class="cv-step-desc">CMake 增加 IMEM 指令数自动检测，超过 3.8K 条自动失败。<strong>负责人：</strong>侯翔蔡 · <strong>截止：</strong>2026-04-07</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="cv-footer">
+    <div class="cv-footer-card">TNIC / XLine Team · RFC-2026-013 方案评审 · 2026-04-02 · Powered by Context Visualizer v4</div>
+  </footer>
+
+</body>
+</html>

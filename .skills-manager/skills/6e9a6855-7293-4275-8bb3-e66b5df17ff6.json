@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "6e9a6855-7293-4275-8bb3-e66b5df17ff6",
+  "path": "crossing-the-chasm",
+  "path_key": "crossing-the-chasm",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Tactile 材质叙事海报"
+  short_description: "用材质叙事与编辑网格生成单张当代海报"
+  icon_large: "./assets/preview.png"
+  default_prompt: "Use $artifact-template-tactile to create one tactile editorial poster from my theme and copy."
+policy:
+  allow_implicit_invocation: true

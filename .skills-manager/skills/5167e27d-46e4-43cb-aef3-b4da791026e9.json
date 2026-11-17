@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5167e27d-46e4-43cb-aef3-b4da791026e9",
+  "path": "consumer-privacy",
+  "path_key": "consumer-privacy",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "eval_set_id": "my_trace_set",
+  "name": "Trace 离线评测集",
+  "description": "已采集的真实输出放在 actual_conversation；conversation 放参考期望。配 trace 模式 Agent 直接打分，不再调用被测系统",
+  "eval_cases": [
+    {
+      "eval_id": "trace_001",
+      "eval_mode": "trace",
+      "actual_conversation": [
+        {
+          "invocation_id": "inv-1",
+          "user_content": { "parts": [{ "text": "上海天气怎么样" }], "role": "user" },
+          "final_response": { "parts": [{ "text": "上海当前 18°C，多云。" }], "role": "model" },
+          "intermediate_data": {
+            "tool_uses": [{ "id": "t1", "name": "get_weather", "args": { "city": "上海" } }]
+          }
+        }
+      ],
+      "conversation": [
+        {
+          "invocation_id": "exp-1",
+          "user_content": { "parts": [{ "text": "上海天气怎么样" }], "role": "user" },
+          "final_response": { "parts": [{ "text": "18°C" }], "role": "model" }
+        }
+      ]
+    }
+  ]
+}

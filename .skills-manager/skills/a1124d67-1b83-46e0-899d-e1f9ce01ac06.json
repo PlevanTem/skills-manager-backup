@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "a1124d67-1b83-46e0-899d-e1f9ce01ac06",
+  "path": "pci-bundle",
+  "path_key": "pci-bundle",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

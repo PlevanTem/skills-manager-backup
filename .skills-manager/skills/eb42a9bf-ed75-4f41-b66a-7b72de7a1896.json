@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "eb42a9bf-ed75-4f41-b66a-7b72de7a1896",
+  "path": "highEqReplyAssistant",
+  "path_key": "higheqreplyassistant",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

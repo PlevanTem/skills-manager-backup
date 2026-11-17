@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "eedd5ea8-99d0-4ad5-9dfd-7d2721ef3d68",
+  "path": "westock-data",
+  "path_key": "westock-data",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

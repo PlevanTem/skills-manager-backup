@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "d12ad1ad-372b-4f80-b5fa-e3b3f511501e",
+  "path": "porters-five-forces",
+  "path_key": "porters-five-forces",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

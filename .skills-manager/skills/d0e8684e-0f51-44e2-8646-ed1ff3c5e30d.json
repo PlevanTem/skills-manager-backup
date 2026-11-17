@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "d0e8684e-0f51-44e2-8646-ed1ff3c5e30d",
+  "path": "reverse-motion-skill",
+  "path_key": "reverse-motion-skill",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

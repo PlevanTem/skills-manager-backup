@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "765f4e28-ec4e-4d5c-aef1-c5f737bb0f44",
+  "path": "healthcare-compliance",
+  "path_key": "healthcare-compliance",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

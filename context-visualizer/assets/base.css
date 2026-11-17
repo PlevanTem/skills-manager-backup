@@ -1,0 +1,348 @@
+:root {
+  --bg: #f6f8fb;
+  --bg-soft: #eef3f8;
+  --panel: #ffffff;
+  --panel-soft: #f7f9fc;
+  --line: #d7dfeb;
+  --text: #162033;
+  --muted: #61738f;
+  --accent: #2563eb;
+  --accent-soft: #e8f0ff;
+  --success: #0f9f6e;
+  --warning: #b7791f;
+  --danger: #dc2626;
+  --neutral: #64748b;
+  --max: 1180px;
+  --radius: 20px;
+  --shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* ── Dark Theme 变量覆盖 ── */
+.theme-dark-screen {
+  --bg: #0f172a;
+  --bg-soft: #1a2332;
+  --panel: #1e293b;
+  --panel-soft: #263548;
+  --line: rgba(148, 163, 184, 0.14);
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #60a5fa;
+  --accent-soft: #1e3a5f;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --neutral: #94a3b8;
+  --shadow: 0 18px 42px rgba(0, 0, 0, 0.3);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  background:
+    radial-gradient(circle at top, rgba(37, 99, 235, 0.08), transparent 28%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+.cv-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid var(--line);
+}
+.cv-topbar-inner, .cv-page, .cv-footer {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.cv-topbar-inner {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.cv-brand {
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+/* ⚠️ .cv-nav 已废弃 — 章节导航统一由左侧导航栏(Side TOC)承担
+   保留最小样式兼容旧 HTML，但不推荐使用 */
+.cv-nav {
+  display: none;
+}
+.cv-page { padding-top: 42px; padding-bottom: 40px; }
+.cv-footer {
+  padding-top: 10px;
+  padding-bottom: 56px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.cv-footer-card {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+@media (max-width: 920px) {
+  .cv-topbar-inner {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   左侧导航栏 (Side TOC)
+   默认收起，点击汉堡按钮展开；点击条目跳转章节
+   ═══════════════════════════════════════════════ */
+
+/* 汉堡按钮 — 固定在左侧 */
+.cv-toc-toggle {
+  position: fixed;
+  top: 68px;
+  left: 12px;
+  z-index: 100;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  padding: 0;
+  color: var(--muted);
+}
+.cv-toc-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.12);
+}
+.cv-toc-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* 导航栏面板 */
+.cv-toc-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  width: 280px;
+  height: 100vh;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  box-shadow: 4px 0 24px rgba(0,0,0,0.08);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.cv-toc-panel.cv-toc-open {
+  transform: translateX(0);
+}
+
+/* 导航栏头部 */
+.cv-toc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.cv-toc-header-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.cv-toc-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: all 0.2s;
+  padding: 0;
+}
+.cv-toc-close:hover {
+  color: var(--danger);
+  background: rgba(220,38,38,0.06);
+}
+.cv-toc-close svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* 导航列表 */
+.cv-toc-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.cv-toc-list::-webkit-scrollbar {
+  width: 4px;
+}
+.cv-toc-list::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+.cv-toc-item {
+  display: block;
+  padding: 10px 20px;
+  font-size: 13.5px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.cv-toc-item:hover {
+  color: var(--text);
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+.cv-toc-item.cv-toc-active {
+  color: var(--accent);
+  font-weight: 700;
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+/* 二级缩进（h3） */
+.cv-toc-item[data-toc-level="3"] {
+  padding-left: 36px;
+  font-size: 12.5px;
+}
+
+/* 遮罩层 */
+.cv-toc-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 98;
+  background: rgba(0,0,0,0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.cv-toc-overlay.cv-toc-overlay-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+  .cv-toc-panel {
+    width: 260px;
+  }
+  .cv-toc-toggle {
+    top: 62px;
+    left: 8px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   文章插图模式 (Article Illustration Mode)
+   截图友好：纯白背景、紧凑布局、无骨架、无交互
+   body 追加 class "cv-article-illustration" 启用
+   ═══════════════════════════════════════════════ */
+
+.cv-article-illustration {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --bg-soft: #f9fafb;
+  --max: 680px;
+  --radius: 8px;
+  --shadow: none;
+  --accent: #3b82f6;
+  --accent-soft: #eff6ff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --border: #e5e7eb;
+
+  background: var(--bg) !important;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 24px;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* 隐藏页面骨架 */
+.cv-article-illustration .cv-topbar,
+.cv-article-illustration .cv-footer,
+.cv-article-illustration .cv-nav,
+.cv-article-illustration .cv-toc-toggle,
+.cv-article-illustration .cv-toc-panel,
+.cv-article-illustration .cv-toc-overlay {
+  display: none !important;
+}
+
+/* 插图模式下的 section 去掉多余装饰 */
+.cv-article-illustration .cv-section {
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+/* 插图模式下的标题排版 */
+.cv-article-illustration h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.cv-article-illustration h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+/* 插图模式下 page 容器取消额外 padding */
+.cv-article-illustration .cv-page {
+  padding: 0;
+  max-width: none;
+}

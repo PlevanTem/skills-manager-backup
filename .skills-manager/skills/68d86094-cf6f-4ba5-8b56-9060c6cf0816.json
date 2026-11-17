@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "68d86094-cf6f-4ba5-8b56-9060c6cf0816",
+  "path": "sprint-planning",
+  "path_key": "sprint-planning",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

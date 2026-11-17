@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "ede5d259-d46b-4ec5-964d-6bc00bb8555c",
+  "path": "mom-test",
+  "path_key": "mom-test",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

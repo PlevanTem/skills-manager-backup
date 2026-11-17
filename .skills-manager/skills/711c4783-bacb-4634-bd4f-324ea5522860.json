@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "711c4783-bacb-4634-bd4f-324ea5522860",
+  "path": "impact-mapping",
+  "path_key": "impact-mapping",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

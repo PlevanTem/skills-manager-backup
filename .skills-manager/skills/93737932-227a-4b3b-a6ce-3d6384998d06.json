@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "93737932-227a-4b3b-a6ce-3d6384998d06",
+  "path": "opportunity-solution-tree",
+  "path_key": "opportunity-solution-tree",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

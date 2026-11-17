@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5b1fee85-66d6-457a-ae7e-03ac8b6cd053",
+  "path": "plg-operating-model",
+  "path_key": "plg-operating-model",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

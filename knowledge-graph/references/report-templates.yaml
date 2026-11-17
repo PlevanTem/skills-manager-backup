@@ -1,0 +1,75 @@
+# 报告模板 (report-templates)
+
+> 被 SKILL.md Stage 4/5 引用，定义验证报告和评分报告的输出格式
+
+---
+
+## validation — 验证报告模板
+
+```yaml
+validation_report:
+  timestamp: "YYYY-MM-DDTHH:MM:SS"
+  overall_status: "PASS/FAIL/WARNING"
+
+  coverage:
+    core_file_coverage: {actual: "X%", target: "100%", status: "PASS/FAIL", missing: [...]}
+    supplement_coverage: {actual: "X%", target: "95%", status: "PASS/FAIL"}
+    domain_model_coverage: {actual: "X%", target: "100%", status: "PASS/FAIL"}
+    relation_coverage: {actual: "X%", target: "100%", status: "PASS/FAIL"}
+
+  orphan_nodes:
+    count: N
+    total_entities: N
+    percentage: "X%"
+    details: [{id: "E_xxx", name: "xxx", reason: "..."}]
+
+  relation_correctness:
+    direction_errors: N
+    cardinality_mismatches: N
+    cycle_detected: true/false
+    details: [...]
+
+  competency_questions:
+    p0_coverage: "X%"
+    p1_coverage: "X%"
+    p2_coverage: "X%"
+    failed_questions: [...]
+```
+
+---
+
+## score — 评分报告模板
+
+```yaml
+score_report:
+  timestamp: "YYYY-MM-DDTHH:MM:SS"
+  version: "vX.Y"
+
+  kg_quality:
+    accuracy: {score: N, details: "..."}
+    completeness: {score: N, details: "..."}
+    consistency: {score: N, details: "..."}
+    connectivity: {score: N, details: "..."}
+    semantic_richness: {score: N, details: "..."}
+    total: N
+
+  consumption_quality:
+    cq_coverage: {score: N, details: "..."}
+    multi_hop: {score: N, details: "..."}
+    path_diversity: {score: N, details: "..."}
+    understandability: {score: N, details: "..."}
+    token_efficiency: {score: N, details: "..."}
+    total: N
+
+  maintenance_quality:
+    provenance: {score: N, details: "..."}
+    schema_quality: {score: N, details: "..."}
+    incremental_update: {score: N, details: "..."}
+    version_control: {score: N, details: "..."}
+    documentation: {score: N, details: "..."}
+    total: N
+
+  overall_score: N
+  grade: "S/A/B/C/D"
+  recommendation: "..."
+```

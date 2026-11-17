@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "bdf6b3c6-3461-4dc0-8907-500b4aedece9",
+  "path": "growth-loops",
+  "path_key": "growth-loops",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

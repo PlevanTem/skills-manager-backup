@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "03431465-9691-415e-9c78-1e8f451fbe68",
+  "path": "rag-vs-finetune-decision",
+  "path_key": "rag-vs-finetune-decision",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

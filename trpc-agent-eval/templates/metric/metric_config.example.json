@@ -1,0 +1,35 @@
+[
+  {
+    "metric_name": "final_response_avg_score",
+    "threshold": 1.0,
+    "criterion": {
+      "finalResponse": { "text": { "match": "contains", "case_insensitive": true } }
+    }
+  },
+  {
+    "metric_name": "tool_trajectory_avg_score",
+    "threshold": 1.0,
+    "criterion": {
+      "toolTrajectory": {
+        "order_sensitive": false,
+        "default": { "name": { "match": "exact" }, "arguments": { "match": "exact" } }
+      }
+    }
+  },
+  {
+    "metric_name": "llm_final_response",
+    "threshold": 0.8,
+    "criterion": {
+      "llmJudge": {
+        "judge_model": {
+          "provider_name": "openai",
+          "model_name": "${MODEL:glm_flash}",
+          "base_url": "${MODEL:glm_flash}",
+          "api_key": "${MODEL:glm_flash}",
+          "generation_config": { "temperature": 0.0 }
+        },
+        "models_aggregator": "all_pass"
+      }
+    }
+  }
+]

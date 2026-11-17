@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "74c3668f-2a68-4b8c-870c-5072511746a8",
+  "path": "value-proposition-canvas",
+  "path_key": "value-proposition-canvas",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

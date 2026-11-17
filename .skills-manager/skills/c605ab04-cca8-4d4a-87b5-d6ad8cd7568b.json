@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "c605ab04-cca8-4d4a-87b5-d6ad8cd7568b",
+  "path": "metrics-design",
+  "path_key": "metrics-design",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

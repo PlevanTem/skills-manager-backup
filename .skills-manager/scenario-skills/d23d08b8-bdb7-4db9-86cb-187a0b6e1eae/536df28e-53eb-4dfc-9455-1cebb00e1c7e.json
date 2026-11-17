@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "scenario_id": "d23d08b8-bdb7-4db9-86cb-187a0b6e1eae",
+  "skill_id": "536df28e-53eb-4dfc-9455-1cebb00e1c7e",
+  "sort_order": 5,
+  "tools": {
+    "antigravity": true,
+    "claude_code": true,
+    "codex": true,
+    "cursor": true,
+    "gemini_cli": true,
+    "kimi": true,
+    "kiro": true,
+    "openclaw": true,
+    "opencode": true,
+    "trae": true
+  }
+}

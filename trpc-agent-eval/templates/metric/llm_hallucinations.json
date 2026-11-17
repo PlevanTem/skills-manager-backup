@@ -1,0 +1,16 @@
+{
+  "metric_name": "llm_hallucinations",
+  "threshold": 1.0,
+  "criterion": {
+    "llmJudge": {
+      "judge_model": {
+        "provider_name": "openai",
+        "model_name": "${MODEL:glm_flash}",
+        "base_url": "${MODEL:glm_flash}",
+        "api_key": "${MODEL:glm_flash}",
+        "generation_config": { "temperature": 0.0 }
+      },
+      "models_aggregator": "all_pass"
+    }
+  }
+}

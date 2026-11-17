@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "19054ae7-244c-45ac-905c-924a24aa9821",
+  "path": "prioritization-methods",
+  "path_key": "prioritization-methods",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

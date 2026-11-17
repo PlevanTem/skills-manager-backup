@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "eb024f0e-a9be-4f86-a8db-784520fe9268",
+  "path": "eu-gdpr",
+  "path_key": "eu-gdpr",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

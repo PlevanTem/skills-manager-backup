@@ -1,0 +1,291 @@
+# 知识图谱提取规则 (extraction-rules)
+
+> 被 SKILL.md Stage 2 引用，定义实体/关系/属性的提取规则
+
+---
+
+## 一、实体提取规则
+
+### rule_domain_class — 领域模型类 → 实体
+```yaml
+source: "领域模型类图中的类"
+mapping: "每个类 → 一个实体"
+attributes:
+  - name: "类名（中文优先）"
+  - type: "实体类型（聚合根/实体/值对象/枚举）"
+  - domain: "所属业务子域"
+  - description: "类的说明文字"
+  - source_file: "来源文件路径"
+example:
+  input: "交易订单【聚合根】"
+  output:
+    id: "E_TRADE_ORDER"
+    name: "交易订单"
+    type: "聚合根"
+    domain: "C2B交易域"
+    description: "交易的聚合根，统领受益单、支付单、商品单、场景单"
+```
+
+### rule_noun_concept — 名词概念 → 实体
+```yaml
+source: "名词列表中的术语"
+mapping: "每个名词术语 → 一个实体"
+attributes:
+  - name: "术语名称"
+  - definition: "精准定义"
+  - aliases: "同义词/别名列表"
+  - domain: "所属业务子域"
+dedup_rule: "如果名词已在领域模型中出现，合并而非新建"
+```
+
+### rule_enum_value — 枚举值 → 实体
+```yaml
+source: "枚举类型的具体值"
+mapping: "每个枚举值 → 一个实体，枚举类型 → 父实体"
+example:
+  input: "支付方式类型 → {零钱, 零钱通, 银行卡, 信用卡, 分付...}"
+  output:
+    - {id: "E_PAY_METHOD_CASH", name: "零钱", type: "枚举值", parent: "支付方式"}
+    - {id: "E_PAY_METHOD_LQT", name: "零钱通", type: "枚举值", parent: "支付方式"}
+```
+
+### rule_system — 系统/子系统 → 实体
+```yaml
+source: "系统架构描述"
+mapping: "每个系统/子系统 → 一个实体"
+attributes:
+  - name: "系统名称"
+  - level: "系统层级（系统/子系统/模块）"
+  - description: "系统职责描述"
+```
+
+### rule_no_shadow_entity — 禁止跨域影子实体（铁律 9）
+```yaml
+source: "跨领域建模"
+rule: |
+  同一业务概念（按 name 字段判定）只允许在一个领域中定义为权威实体。
+  下游领域需使用上游概念时，直接引用上游实体 ID，通过 depends_on 关系表达跨域依赖。
+  禁止创建 type=引用实体 或带 cross_domain_ref 的影子副本。
+enforcement: "Stage 4 强制校验，违反即阻断"
+violation_examples:
+  - bad: "退款领域创建 E_RF_交易订单 (type: 引用实体, cross_domain_ref: E_TRADE_交易订单)"
+    reason: "交易订单已在交易域定义，退款领域不应再建同名实体"
+  - good: "退款领域的 E_RF_交易退款单 通过 depends_on 关系直接引用 E_TRADE_交易订单"
+    reason: "退款单是退款域原生概念，通过关系表达对交易订单的依赖"
+dedup_rule: |
+  发现同名实体出现在多个领域时：
+  1. 保留概念归属领域的权威版本
+  2. 删除其余领域的影子副本
+  3. 将引用影子副本的关系改为引用权威实体 ID
+  4. 记录到 kg-entity-mapping.md
+```
+
+---
+
+## 二、关系提取规则
+
+### rule_association — 领域模型关联关系
+```yaml
+source: "领域模型类图中的关联线"
+types:
+  - "关联(association)": "A 关联 → B"
+  - "组合(composition)": "A 组合 → B（强生命周期依赖）"
+  - "聚合(aggregation)": "A 聚合 → B（弱生命周期依赖）"
+  - "继承(inheritance)": "A 继承 → B（is-a）"
+  - "实现(realization)": "A 实现 → B"
+attributes:
+  - relation_type: "关系类型"
+  - cardinality: "基数（1:1, 1:*, *:*）"
+  - description: "关系描述"
+  - source_file: "来源文件"
+```
+
+### rule_implicit_relation — 隐含关系
+```yaml
+source: "名词定义文本"
+extraction_prompt: |
+  从以下名词定义中提取实体间关系：
+  "{definition}"
+  输出格式：(头实体, 关系类型, 尾实体, 置信度)
+common_relations:
+  - "属于(belongs_to)": "A 是 B 的一种"
+  - "包含(contains)": "A 包含 B"
+  - "依赖(depends_on)": "A 的运行依赖 B"
+  - "跨域依赖(depends_on)": "A 领域的实体依赖 B 领域的权威实体（跨域引用，禁止创建影子副本）"
+  - "触发(triggers)": "A 事件触发 B 动作"
+  - "约束(constrained_by)": "A 受 B 规则约束"
+  - "支持(supports)": "A 支持 B 功能"
+  - "对应(corresponds_to)": "A 与 B 一一对应"
+```
+
+### rule_business_constraint — 业务规则约束
+```yaml
+source: "业务规则文本"
+mapping: "每条规则 → 一组约束关系"
+example:
+  input: "退款金额 ≤ 原订单金额"
+  output:
+    - {head: "退款单", relation: "约束于", tail: "交易单", rule: "退款金额≤原订单金额"}
+```
+
+### rule_cross_dimension — 交叉维度组合
+```yaml
+source: "交易服务类型 = 产品 × 地域 × 连接模式"
+mapping: "三维组合 → 交叉关系"
+example:
+  - {head: "APP支付", relation: "适用于", tail: "商户直连", context: "中国大陆"}
+```
+
+---
+
+## 三、属性规则
+
+### 实体必填属性
+```yaml
+mandatory:
+  - id: "全局唯一标识符，格式 E_{DOMAIN}_{NAME}"
+  - name: "规范名称（中文）"
+  - name_en: "英文名称（如有）"
+  - type: "实体类型（聚合根/实体/值对象/枚举/概念/系统）"
+  - domain: "所属业务子域"
+  - description: "自然语言描述（≥10字）"
+  - source: "数据来源文件"
+```
+
+### 实体可选属性
+```yaml
+optional:
+  - aliases: "别名/同义词列表"
+  - parent: "父概念/父类"
+  - status: "生命周期状态（active/deprecated/archived）"
+  - version: "版本号"
+  - constraints: "约束条件列表"
+  - examples: "实例举例"
+```
+
+### 关系必填属性
+```yaml
+mandatory:
+  - type: "关系类型"
+  - head: "头实体ID"
+  - tail: "尾实体ID"
+  - description: "关系描述"
+  - source: "数据来源"
+```
+
+### 关系可选属性
+```yaml
+optional:
+  - cardinality: "基数"
+  - weight: "权重/重要度(0-1)"
+  - confidence: "置信度(0-1)"
+  - condition: "关系成立的条件"
+  - bidirectional: "是否双向"
+```
+
+---
+
+## 四、规则提取规则
+
+### rule_business_rule — 业务规则 → 规则实体
+```yaml
+source: "需求文档、用例规约中的业务约束描述"
+mapping: "每条独立的业务约束/校验/权限规则 → 一条规则"
+signal_words:
+  - "不能超过"
+  - "必须"
+  - "只有...才能"
+  - "等于"
+  - "先...后"
+  - "不得"
+  - "至少"
+  - "不允许"
+  - "需满足"
+attributes:
+  - name: "规则名称（动宾短语）"
+  - type: "规则类型（业务约束/状态机规则/权限规则/数据校验）"
+  - condition: "触发条件"
+  - action: "执行动作或拒绝描述"
+  - involvedEntities: "关联实体 ID 列表"
+example:
+  input: "退款金额不能超过原订单实付金额"
+  output:
+    id: "RULE_001"
+    name: "退款金额上限约束"
+    type: "业务约束"
+    condition: "退款金额 > 原订单实付金额"
+    action: "拒绝退款申请"
+    involvedEntities: ["E_REFUND_ORDER", "E_TRADE_ORDER"]
+    source: "退款领域用例-受理退款.md"
+```
+
+---
+
+## 五、流程提取规则
+
+### rule_business_flow — 用例规约 → 流程实体
+```yaml
+source: "用例规约的主成功路径和扩展步骤"
+mapping: "每个用例的主成功路径 → 一个流程，扩展步骤 → errorScenarios"
+signal_words:
+  - "第一步"
+  - "主成功路径"
+  - "前置条件"
+  - "后置条件"
+  - "扩展步骤"
+  - "步骤1"
+  - "系统验证"
+  - "用户提交"
+attributes:
+  - name: "流程名称（与用例名称对应）"
+  - triggerCondition: "前置条件或触发事件"
+  - steps: "按序提取每个步骤的 actor/action/entityRef/ruleRef"
+  - happyPath: "主成功路径的摘要"
+  - errorScenarios: "扩展步骤中的异常场景"
+example:
+  input: |
+    用例: 受理单笔退款
+    前置条件: 原交易订单已支付成功
+    主成功路径:
+      1. 商户提交退款请求
+      2. 系统校验退款金额
+      3. 系统创建退款单
+  output:
+    id: "FLOW_001"
+    name: "受理单笔退款"
+    triggerCondition: "原交易订单已支付成功，商户提交退款请求"
+    steps:
+      - {order: 1, actor: "商户", action: "提交退款请求", entityRef: "E_MERCHANT"}
+      - {order: 2, actor: "系统", action: "校验退款金额", entityRef: "E_REFUND_ORDER", ruleRef: "RULE_001"}
+      - {order: 3, actor: "系统", action: "创建退款单", entityRef: "E_REFUND_ORDER"}
+    source: "退款领域用例-受理退款.md"
+```
+
+---
+
+## 六、术语表提取规则
+
+### rule_glossary_entry — 实体名/英文名/同义词 → 术语条目
+```yaml
+source: "从 kg-entities.yaml 自动生成 + 代码扫描补充"
+mapping: |
+  1. 每个实体的 name → 一条术语（definition 取实体 description）
+  2. 每个实体的 name_en（如非空）→ 一条术语（definition 标注为英文名）
+  3. 每个实体 aliases 中的别名 → 一条术语（definition 标注为别名）
+  4. 代码扫描中发现的缩写/常量名 → 一条术语
+auto_generate: true
+dedup_rule: "同一 term 仅保留一条，entityRef 指向同一实体时合并"
+example:
+  input:
+    entity:
+      id: "E_TRADE_ORDER"
+      name: "交易订单"
+      name_en: "TradeOrder"
+      aliases: ["交易单", "支付订单"]
+      description: "交易的聚合根，统领受益单、支付单、商品单、场景单"
+  output:
+    - {term: "交易订单", definition: "交易的聚合根，统领受益单、支付单、商品单、场景单", entityRef: "E_TRADE_ORDER", source: "自动生成"}
+    - {term: "TradeOrder", definition: "交易订单的英文名", entityRef: "E_TRADE_ORDER", fieldRef: "name_en", source: "自动生成"}
+    - {term: "交易单", definition: "交易订单的别名", entityRef: "E_TRADE_ORDER", fieldRef: "aliases", source: "自动生成"}
+    - {term: "支付订单", definition: "交易订单的别名", entityRef: "E_TRADE_ORDER", fieldRef: "aliases", source: "自动生成"}
+```

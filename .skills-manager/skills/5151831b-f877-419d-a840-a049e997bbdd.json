@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5151831b-f877-419d-a840-a049e997bbdd",
+  "path": "pm-tech-spec-review",
+  "path_key": "pm-tech-spec-review",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

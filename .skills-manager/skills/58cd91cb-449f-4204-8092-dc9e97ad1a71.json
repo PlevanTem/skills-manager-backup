@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "58cd91cb-449f-4204-8092-dc9e97ad1a71",
+  "path": "hooked-ux",
+  "path_key": "hooked-ux",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

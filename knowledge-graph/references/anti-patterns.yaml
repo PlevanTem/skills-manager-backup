@@ -1,0 +1,123 @@
+# 知识图谱建设反模式记录
+#
+# 记录实际使用中"看似合理但会出错"的做法。
+# 每条包含：现象、根因、正确做法。遇到类似情况时查阅。
+
+anti_patterns:
+
+  - id: AP001
+    name: "名词定义当实体描述"
+    symptom: "直接复制名词库定义作为实体 description，导致描述过于抽象"
+    root_cause: "名词库定义是词典式解释，缺少'在系统中扮演什么角色'的上下文"
+    correct: |
+      description 需三要素：是什么 + 为什么存在 + 在体系中的角色。
+      差: "商户号：商户的唯一标识"
+      好: "商户号是微信支付体系中唯一标识一个商户主体的 10 位数字编码，
+           所有交易、结算、退款操作都通过商户号关联到对应商户"
+
+  - id: AP002
+    name: "星型结构陷阱"
+    symptom: "一个核心实体（如'交易订单'）直接关联 20+ 个实体，形成星型拓扑"
+    root_cause: "只提取了直接关系，忽略了实体间的中间层级和间接关系"
+    correct: |
+      拆分中间实体。例如：
+      差: 交易订单 → 关联 → 银行卡/零钱/零钱通/分付/...
+      好: 交易订单 → 使用 → 支付方式 → 包含 → 零钱/零钱通/银行卡/分付
+
+  - id: AP003
+    name: "枚举值爆炸"
+    symptom: "将所有枚举值都建为独立实体，实体数膨胀到数百个"
+    root_cause: "未区分'需要独立建模的枚举值'和'纯属性值'"
+    correct: |
+      判断标准：枚举值是否有自己的属性或关系？
+      - 有（如"银行卡"有发卡行、卡BIN）→ 建为实体
+      - 无（如"已支付"/"已关闭"等纯状态值）→ 保留为属性的 enumValues
+
+  - id: AP004
+    name: "覆盖率虚高"
+    symptom: "覆盖率显示 100%，但能力问题实测无法回答"
+    root_cause: "只检查了实体名称匹配，未检查关系路径是否连通"
+    correct: |
+      覆盖率验证必须包含两层：
+      1. 实体覆盖：名词在实体列表中存在（名称 + 别名匹配）
+      2. 路径覆盖：能力问题涉及的实体对之间存在可达路径
+
+  - id: AP005
+    name: "关系方向凭感觉"
+    symptom: "同一对实体出现正反两个方向的关系，自检时矛盾"
+    root_cause: "提取关系时未遵循统一的方向约定"
+    correct: |
+      方向约定（与 extraction-rules.yaml 一致）：
+      - 组合/聚合：整体 → 部分
+      - 依赖：依赖方 → 被依赖方
+      - 触发：触发源 → 被触发方
+      - 继承：子类 → 父类
+      文本中"A 的 B"→ A contains B（A 在前）
+
+  - id: AP006
+    name: "增量更新全量重跑"
+    symptom: "每次新增一个文件就重跑全量构建，耗时且可能引入回归"
+    root_cause: "未使用增量模式，或检查点文件丢失"
+    correct: |
+      1. 使用 --mode=incremental
+      2. 确保检查点文件（kg-triples-raw.yaml 等）存在
+      3. 增量更新后只验证受影响部分，非全量重检
+
+  - id: AP007
+    name: "上下文溢出导致数据丢失"
+    symptom: "大规模构建到后半段时，前面提取的实体/关系被遗忘或重复"
+    root_cause: "知识源过多，超出单次对话上下文窗口"
+    correct: |
+      1. 按业务子域分批处理（Stage 1 规划时划分）
+      2. 每批完成后保存检查点文件到磁盘
+      3. 下一批从文件加载，不依赖上下文记忆
+      4. 配合 staged-task-guard Skill 做分段保护
+
+  - id: AP008
+    name: "名词扩展低阈值噪声"
+    symptom: "名词扩展后92%+的关系是低质量(weakly_associates/candidate_associates)，出现'风控模型↔企微端微信支付用户'等垃圾关系"
+    root_cause: "TF-IDF相似度阈值设太低(0.08-0.10)，接近随机噪声的分数也被当作有效关系"
+    correct: |
+      1. 融合分阈值 >= 0.15（不是0.10）
+      2. 不再使用单信号rescue和Top-1 fallback（P1实测candidate层Precision仅8%，已废弃）
+      3. 质量验收：强+普通关联应占比 > 30%
+      详见 references/noun-extension-algorithm.md
+
+  - id: AP009
+    name: "跨域桥接关系类型一刀切"
+    symptom: "'语义等价'和'子集关系'的桥接被强制转为 depends_on，导致关系语义失真"
+    root_cause: "合并脚本将所有非'同一实体'桥接统一转为 depends_on"
+    correct: |
+      仅 relation_type='同一实体' 的桥接转为 depends_on（因为影子实体已删除，需要表达引用语义）。
+      其他类型（语义等价/子集关系/对齐映射/镜像映射/引用关联/驱动关联/实例关系/扩展映射）
+      必须保留原始 relation_type。
+
+  - id: AP010
+    name: "高频实体污染"
+    symptom: "一个v1实体（如'商户'）被500+个名词关联，形成噪声聚集"
+    root_cause: "高频词（商户/支付/交易等）出现在所有名词解释中，未做去噪处理"
+    correct: |
+      1. 统计v1实体名在名词解释中的出现频率
+      2. 去除 Top-5% 高频实体在 Jaccard 和 mention_boost 信号中的参与（TF-IDF 的 IDF 自动降权）
+      3. 对超过 MAX_DEGREE(300) 的实体做度中心性剪枝
+      来源: RAGAS OverlapScoreBuilder._get_noisy_items() + KGTrimmer SIGIR 2024
+
+  - id: AP011
+    name: "桥接关系类型与描述矛盾"
+    symptom: "桥接文件中 relation_type 标注为'语义等价'，但 description 明确说'是...的子集'"
+    root_cause: "人工标注桥接关系时类型和描述不一致"
+    correct: |
+      交叉校验桥接文件：逐条检查 relation_type 与 description 的语义是否一致。
+      类型判定优先参考 description 的实际描述，而非 relation_type 标签。
+      常见混淆：'语义等价'（A≈B，同一概念不同视角）vs '子集关系'（A⊂B，A是B的一部分）
+
+  - id: AP012
+    name: "名词扩展只看名称不看解释"
+    symptom: "98%的名词只有1条关系，大量词只能兜底挂到域锚点"
+    root_cause: "构建关系时只用名称子串匹配，完全忽略了名词解释中丰富的语义信息"
+    correct: |
+      必须同时分析名称和解释文本。推荐三信号融合：
+      1. 名称Jaccard（token集合交集/并集）
+      2. TF-IDF余弦（全文语义向量相似度）
+      3. 提及增强（解释中是否直接提到已有实体名）
+      详见 references/noun-extension-algorithm.md

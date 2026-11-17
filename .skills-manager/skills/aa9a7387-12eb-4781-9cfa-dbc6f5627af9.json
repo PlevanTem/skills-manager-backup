@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "aa9a7387-12eb-4781-9cfa-dbc6f5627af9",
+  "path": "edtech-compliance",
+  "path_key": "edtech-compliance",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

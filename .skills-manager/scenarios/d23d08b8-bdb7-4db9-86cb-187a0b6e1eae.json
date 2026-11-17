@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "scenario_id": "d23d08b8-bdb7-4db9-86cb-187a0b6e1eae",
+  "name": "AI",
+  "description": null,
+  "icon": "bot",
+  "sort_order": 999
+}

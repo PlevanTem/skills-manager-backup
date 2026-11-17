@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="zh-CN" theme-mode="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>{{TITLE}}</title>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <!-- TDesign UI -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/tdesign-vue-next/dist/tdesign.min.css"
+    />
+    <script src="https://unpkg.com/tdesign-vue-next/dist/tdesign.min.js"></script>
+    <!-- TDesign Icons -->
+    <script src="https://unpkg.com/tdesign-icons-vue-next/dist/index.min.js"></script>
+
+    <style>
+      /* 语义色别名 → 全部映射到 TDesign Dark Token（Usage-2 Token 优先） */
+      :root {
+        --bg-page: var(--td-bg-color-page);
+        --bg-card: var(--td-bg-color-container);
+        --bg-card-2: var(--td-bg-color-secondarycontainer);
+        --stroke: var(--td-component-stroke);
+        --border: var(--td-component-border);
+        --text-1: var(--td-text-color-primary);
+        --text-2: var(--td-text-color-secondary);
+        --text-3: var(--td-text-color-placeholder);
+        --brand: var(--td-brand-color);
+        --success: var(--td-success-color);
+        --success-light: var(--td-success-color-1);
+        --warning: var(--td-warning-color);
+        --warning-light: var(--td-warning-color-1);
+        --error: var(--td-error-color);
+        --error-light: var(--td-error-color-1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg-page);
+        color: var(--text-1);
+        font-family: var(
+          --td-font-family,
+          "PingFang SC",
+          "Microsoft YaHei",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif
+        );
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+
+      /* —— 头部 —— */
+      .header {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--stroke);
+      }
+      .header-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0 0 6px;
+      }
+      .header-meta {
+        font-size: 13px;
+        color: var(--text-2);
+      }
+      .header-meta a {
+        color: var(--brand);
+        text-decoration: none;
+      }
+      .header-meta a:hover {
+        text-decoration: underline;
+      }
+      .badge-pill {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 500;
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+      .badge-pill.ok {
+        background: var(--success-light);
+        color: var(--success);
+      }
+      .badge-pill.warn {
+        background: var(--warning-light);
+        color: var(--warning);
+      }
+      .badge-pill.bad {
+        background: var(--error-light);
+        color: var(--error);
+      }
+
+      /* —— 评分卡 —— */
+      .scorebar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .scorebar-cell {
+        background: var(--bg-card);
+        border: 1px solid var(--stroke);
+        border-radius: 8px;
+        padding: 14px 16px;
+      }
+      .scorebar-num {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+      .scorebar-num.ok {
+        color: var(--success);
+      }
+      .scorebar-num.warn {
+        color: var(--warning);
+      }
+      .scorebar-num.bad {
+        color: var(--error);
+      }
+      .scorebar-num.brand {
+        color: var(--brand);
+      }
+      .scorebar-label {
+        font-size: 12px;
+        color: var(--text-2);
+        margin-top: 4px;
+      }
+      .scorebar-extra {
+        font-size: 11px;
+        color: var(--text-3);
+        margin-top: 2px;
+      }
+
+      /* —— 通用卡片 —— */
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--stroke);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+      }
+      .card-tone-tag {
+        font-size: 11px;
+        font-weight: 500;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .card-summary {
+        color: var(--text-2);
+        font-size: 13px;
+        line-height: 1.7;
+        margin-bottom: 16px;
+      }
+
+      /* —— 双栏 cols —— */
+      .cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 720px) {
+        .cols {
+          grid-template-columns: 1fr;
+        }
+      }
+      .col {
+        background: var(--bg-card-2);
+        border-radius: 6px;
+        padding: 14px 16px;
+        border-left: 3px solid var(--brand);
+      }
+      .col.success {
+        border-left-color: var(--success);
+      }
+      .col.warning {
+        border-left-color: var(--warning);
+      }
+      .col.error {
+        border-left-color: var(--error);
+      }
+      .col-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 0 0 2px;
+        color: var(--text-1);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .col-title::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--brand);
+        flex: none;
+      }
+      .col.success .col-title::before {
+        background: var(--success);
+      }
+      .col.warning .col-title::before {
+        background: var(--warning);
+      }
+      .col.error .col-title::before {
+        background: var(--error);
+      }
+      .col-sub {
+        font-size: 11px;
+        color: var(--text-3);
+        margin-bottom: 10px;
+      }
+      .col ol,
+      .col ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--text-2);
+        font-size: 12.5px;
+        line-height: 1.7;
+      }
+      .col ol li,
+      .col ul li {
+        margin-bottom: 6px;
+      }
+
+      /* —— Section header —— */
+      .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .section-desc {
+        color: var(--text-2);
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
+      .section-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .section-header .section-title {
+        margin: 0 0 4px;
+      }
+
+      /* —— 差异点底图（在渲染图上叠加） —— */
+      .snapshot-section {
+        margin-bottom: 24px;
+      }
+      .snapshot-wrap {
+        position: relative;
+        background: var(--bg-card);
+        border: 1px solid var(--stroke);
+        border-radius: 8px;
+        overflow: hidden;
+        text-align: center;
+      }
+      .snapshot-inner {
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+      }
+      .snapshot-inner img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--text-2);
+        flex-wrap: wrap;
+      }
+      .legend-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+        vertical-align: middle;
+      }
+
+      /* —— 差异点热区（自动检测） —— */
+      .diff-point {
+        position: absolute;
+        border: 2px solid var(--warning);
+        background: rgba(227, 115, 24, 0.16);
+        border-radius: 2px;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: background 0.15s, box-shadow 0.15s;
+      }
+      .diff-point.error {
+        border-color: var(--error);
+        background: rgba(227, 77, 89, 0.2);
+      }
+      .diff-point.warning {
+        border-color: var(--warning);
+        background: rgba(227, 115, 24, 0.2);
+      }
+      .diff-point.info {
+        border-color: var(--brand);
+        background: rgba(71, 135, 240, 0.18);
+      }
+      /* 选中态：明亮描边 + 呼吸动画，非常显眼 */
+      .diff-point.is-hit {
+        border-width: 3px;
+        border-color: #fff;
+        background: rgba(255, 255, 255, 0.28);
+        z-index: 20;
+        animation: dp-pulse 1.1s ease-in-out infinite;
+      }
+      @keyframes dp-pulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 0 3px rgba(255, 255, 255, 0.9),
+            0 0 16px 4px rgba(255, 255, 255, 0.55);
+        }
+        50% {
+          box-shadow:
+            0 0 0 5px rgba(255, 255, 255, 0.7),
+            0 0 26px 8px rgba(255, 255, 255, 0.35);
+        }
+      }
+      /* 存在选中项时弱化其它差异点，突出焦点 */
+      .snapshot-inner.dp-focused .diff-point:not(.is-hit) {
+        opacity: 0.28;
+      }
+      .dp-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+      }
+      .dp-table th {
+        text-align: left;
+        color: var(--text-3);
+        font-weight: 500;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--stroke);
+      }
+      .dp-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--stroke);
+        color: var(--text-2);
+        vertical-align: middle;
+      }
+      .dp-row {
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .dp-row:hover {
+        background: var(--bg-card-2);
+      }
+      .dp-row.dp-active {
+        background: rgba(71, 135, 240, 0.16);
+      }
+      .dp-row.dp-active td {
+        color: var(--text-1);
+      }
+      .dp-row.dp-active td:first-child {
+        box-shadow: inset 3px 0 0 0 var(--brand);
+        font-weight: 700;
+      }
+      .dp-bbox {
+        font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
+        color: var(--text-3);
+        white-space: nowrap;
+      }
+      .dp-region {
+        font-weight: 600;
+        color: var(--text-1);
+        white-space: nowrap;
+      }
+      .dp-reason {
+        color: var(--text-2);
+        line-height: 1.5;
+        min-width: 260px;
+      }
+      .dp-muted-text {
+        color: var(--text-3);
+        font-weight: 400;
+      }
+
+      /* —— View toggle：已由 TDesign t-radio-group 承载，仅保留对齐微调 —— */
+      .view-toggle .t-radio-group {
+        vertical-align: middle;
+      }
+      .view-toggle .t-radio-button .t-icon {
+        margin-right: 4px;
+      }
+
+      /* —— 垫图叠加对比器 —— */
+      .cmp-wrap {
+        background: var(--bg-card);
+        border: 1px solid var(--stroke);
+        border-radius: 8px;
+        padding: 16px;
+      }
+      .cmp-stage {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        border-radius: 6px;
+        user-select: none;
+        background: #000;
+        line-height: 0;
+      }
+      .cmp-stage .cmp-base,
+      .cmp-stage .cmp-diff,
+      .cmp-stage .cmp-overlay-img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .cmp-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 50%;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .cmp-overlay-img {
+        width: var(--cmp-base-w, 100%) !important;
+        max-width: none;
+      }
+      .cmp-diff {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .cmp-handle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: rgba(255, 255, 255, 0.95);
+        cursor: ew-resize;
+        z-index: 5;
+        transform: translateX(-1px);
+      }
+      .cmp-handle-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 2px;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.4),
+          0 0 12px rgba(255, 255, 255, 0.6);
+        transform: translateX(-50%);
+      }
+      .cmp-handle-knob {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--brand);
+        box-shadow: var(--td-shadow-2);
+        color: var(--td-text-color-anti);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: ew-resize;
+      }
+      .cmp-tag {
+        position: absolute;
+        top: 12px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: rgba(0, 0, 0, 0.65);
+        color: #fff;
+        z-index: 4;
+        pointer-events: none;
+        backdrop-filter: blur(8px);
+      }
+      .cmp-tag-left {
+        left: 12px;
+      }
+      .cmp-tag-right {
+        right: 12px;
+        background: rgba(71, 135, 240, 0.85);
+      }
+      .cmp-stage[data-mode="onion"] .cmp-overlay {
+        width: 100% !important;
+        opacity: var(--cmp-opacity, 0.6);
+      }
+      .cmp-stage[data-mode="onion"] .cmp-handle {
+        display: none;
+      }
+      .cmp-stage[data-mode="diff"] .cmp-overlay {
+        display: none;
+      }
+      .cmp-stage[data-mode="diff"] .cmp-handle {
+        display: none;
+      }
+      .cmp-stage[data-mode="diff"] .cmp-diff {
+        opacity: 1;
+      }
+      .cmp-stage[data-mode="diff"] .cmp-tag-right {
+        background: rgba(227, 115, 24, 0.85);
+      }
+      .cmp-stage[data-mode="base"] .cmp-overlay,
+      .cmp-stage[data-mode="base"] .cmp-handle,
+      .cmp-stage[data-mode="base"] .cmp-diff,
+      .cmp-stage[data-mode="base"] .cmp-tag-right {
+        display: none;
+      }
+      .cmp-stage[data-mode="render"] .cmp-overlay {
+        width: 100% !important;
+        opacity: 1;
+      }
+      .cmp-stage[data-mode="render"] .cmp-handle,
+      .cmp-stage[data-mode="render"] .cmp-diff,
+      .cmp-stage[data-mode="render"] .cmp-tag-left {
+        display: none;
+      }
+      .cmp-controls {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .cmp-controls-label {
+        font-size: 12px;
+        color: var(--text-2);
+        min-width: 80px;
+      }
+      .cmp-controls .t-slider {
+        flex: 1;
+        min-width: 200px;
+      }
+      .cmp-controls-value {
+        font-size: 12px;
+        color: var(--text-1);
+        min-width: 36px;
+        text-align: right;
+      }
+      .cmp-tip {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--text-3);
+        line-height: 1.6;
+      }
+      .cmp-tip-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--warning);
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+
+      /* —— 差异点清单卡片 / 严重度标签 —— */
+      .issues-card {
+        background: var(--bg-card);
+        border: 1px solid var(--stroke);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+      .issue-rule-tag {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: var(--td-radius-small, 3px);
+        background: var(--warning);
+        color: var(--td-text-color-anti);
+      }
+      .issue-rule-tag.error {
+        background: var(--error);
+        color: var(--td-text-color-anti);
+      }
+      .issue-rule-tag.success {
+        background: var(--success);
+        color: var(--td-text-color-anti);
+      }
+      .issue-rule-tag.info {
+        background: var(--brand);
+        color: var(--td-text-color-anti);
+      }
+      .issue-rule-tag.muted {
+        background: var(--bg-card-2);
+        color: var(--text-3);
+        border: 1px solid var(--stroke);
+      }
+      .footer {
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid var(--stroke);
+        color: var(--text-3);
+        font-size: 12px;
+        text-align: center;
+      }
+      .code {
+        font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-size: 12px;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--td-scrollbar-color);
+        border-radius: var(--td-radius-default, 4px);
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--td-scrollbar-hover-color);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- ① 头部 -->
+      <div class="header">
+        <div>
+          <h1 class="header-title">{{TITLE}}</h1>
+          <div class="header-meta">{{META_HTML}}</div>
+        </div>
+        <div><span class="badge-pill {{SCORE_TONE}}">{{VERDICT}}</span></div>
+      </div>
+
+      <!-- ② 评分卡 -->
+      <div class="scorebar">
+        <div class="scorebar-cell">
+          <div class="scorebar-num {{SCORE_TONE}}">{{SCORE_TOTAL}}</div>
+          <div class="scorebar-label">加权相似度</div>
+          <div class="scorebar-extra">像素 70% + SSIM 30%</div>
+        </div>
+        <div class="scorebar-cell">
+          <div class="scorebar-num brand">{{PIXEL_SIM}}</div>
+          <div class="scorebar-label">像素相似度</div>
+          <div class="scorebar-extra">
+            差异像素 {{DIFF_PIXELS}} / {{TOTAL_PIXELS}}
+          </div>
+        </div>
+        <div class="scorebar-cell">
+          <div class="scorebar-num brand">{{SSIM_SIM}}</div>
+          <div class="scorebar-label">SSIM 结构相似度</div>
+          <div class="scorebar-extra">结构层级一致性</div>
+        </div>
+        <div class="scorebar-cell">
+          <div class="scorebar-num">{{IMG_SIZE}}</div>
+          <div class="scorebar-label">图像尺寸</div>
+          <div class="scorebar-extra">渲染分辨率</div>
+        </div>
+      </div>
+
+      <!-- ③ 一句话结论 -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">一句话结论</h2>
+          <span class="card-tone-tag">TL;DR</span>
+        </div>
+        <div class="card-summary">{{SUMMARY_HTML}}</div>
+        <div class="cols">
+          <div class="col success">
+            <div class="col-title">顺利达成</div>
+            <div class="col-sub">能力范围内的最佳产出</div>
+            <ol>
+              {{WINS_HTML}}
+            </ol>
+          </div>
+          <div class="col warning">
+            <div class="col-title">待改进</div>
+            <div class="col-sub">需要后续关注</div>
+            <ol>
+              {{ISSUES_BRIEF_HTML}}
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ④ 差异点分布（自动检测） -->
+      {{DIFF_POINTS_HTML}}
+
+      <!-- ⑤ 还原效果对比 · 垫图叠加 -->
+      <div class="snapshot-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">还原效果对比 · 垫图叠加</h2>
+            <div class="section-desc">
+              底层 = 设计稿（垫图）；上层 =
+              渲染结果。多种模式查看哪些区域发生位移。
+            </div>
+          </div>
+          <div class="view-toggle" id="cmpToggle">
+            <t-radio-group
+              v-model="mode"
+              variant="default-filled"
+              size="small"
+              @change="onChange"
+            >
+              <t-radio-button value="slider"
+                ><t-icon name="swap" /> 滑动对比</t-radio-button
+              >
+              <t-radio-button value="onion"
+                ><t-icon name="layers" /> 透明度叠加</t-radio-button
+              >
+              <t-radio-button value="diff"
+                ><t-icon name="chart-bubble" /> 差异图</t-radio-button
+              >
+              <t-radio-button value="base"
+                ><t-icon name="image" /> 仅原稿</t-radio-button
+              >
+              <t-radio-button value="render"
+                ><t-icon name="desktop" /> 仅渲染</t-radio-button
+              >
+            </t-radio-group>
+          </div>
+        </div>
+        <div class="cmp-wrap">
+          <div class="cmp-stage" id="cmpStage" data-mode="slider">
+            <img class="cmp-base" src="{{BASE_IMG}}" alt="设计稿原稿" />
+            <div class="cmp-overlay" id="cmpOverlay" style="width: 50%">
+              <img
+                class="cmp-overlay-img"
+                src="{{RENDER_IMG}}"
+                alt="渲染结果"
+              />
+            </div>
+            <img class="cmp-diff" src="{{DIFF_IMG}}" alt="差异图" />
+            <div class="cmp-handle" id="cmpHandle" style="left: 50%">
+              <div class="cmp-handle-line"></div>
+              <div class="cmp-handle-knob">
+                <span>&#8249;</span><span>&#8250;</span>
+              </div>
+            </div>
+            <div class="cmp-tag cmp-tag-left">{{LEFT_LABEL}}</div>
+            <div class="cmp-tag cmp-tag-right">{{RIGHT_LABEL}}</div>
+          </div>
+          <div class="cmp-controls" id="cmpControls">
+            <div
+              v-if="visible"
+              style="display: flex; flex: 1; gap: 12px; align-items: center"
+            >
+              <span class="cmp-controls-label">渲染层透明度</span>
+              <t-slider
+                v-model="opacity"
+                :min="0"
+                :max="100"
+                :input-number-props="false"
+                @change="onChange"
+              />
+              <span class="cmp-controls-value">{{ opacity }}%</span>
+            </div>
+          </div>
+          <div class="cmp-tip">
+            <span class="cmp-tip-dot"></span>
+            <strong>滑动对比</strong>：拖动手柄 / 鼠标在画布上左右移动
+            &nbsp;·&nbsp; <strong>透明度叠加</strong>：调 0–100% 看两图重叠
+            &nbsp;·&nbsp; <strong>差异图</strong>：仅显示像素差异
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑥ 给设计师的画稿建议 -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">给设计师的画稿建议</h2>
+          <span class="card-tone-tag">{{ADVICE_TONE_TAG}}</span>
+        </div>
+        <div class="card-summary">{{ADVICE_SUMMARY_HTML}}</div>
+        <div class="cols">
+          <div class="col error">
+            <div class="col-title">当前稿件的问题</div>
+            <div class="col-sub">导致还原度受限的原因</div>
+            <ol>
+              {{ADVICE_PROBLEMS_HTML}}
+            </ol>
+          </div>
+          <div class="col success">
+            <div class="col-title">改造建议</div>
+            <div class="col-sub">在 Figma 中应该这样组织</div>
+            <ol>
+              {{ADVICE_SOLUTIONS_HTML}}
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑦ 用户自定义内容（旧 EXTRA_HTML 兼容） -->
+      {{EXTRA_HTML}}
+
+      <div class="footer">
+        Generated by <strong>visual-diff-viewer</strong> ·
+        时间：{{GENERATED_AT}} · 来源：<span class="code">{{SOURCE_PATH}}</span>
+      </div>
+    </div>
+
+    <script>
+      /* === 垫图叠加对比器 === */
+      (function () {
+        var stage = document.getElementById("cmpStage");
+        if (!stage) return;
+        var overlay = document.getElementById("cmpOverlay");
+        var handle = document.getElementById("cmpHandle");
+        var baseImg = stage.querySelector(".cmp-base");
+
+        function syncBaseWidth() {
+          var w = baseImg.getBoundingClientRect().width;
+          stage.style.setProperty("--cmp-base-w", w + "px");
+        }
+        if (baseImg.complete) syncBaseWidth();
+        baseImg.addEventListener("load", syncBaseWidth);
+        window.addEventListener("resize", syncBaseWidth);
+
+        function setSplit(pct) {
+          pct = Math.max(0, Math.min(100, pct));
+          overlay.style.width = pct + "%";
+          handle.style.left = pct + "%";
+        }
+        function pctFromEvent(e) {
+          var rect = stage.getBoundingClientRect();
+          var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+          return (x / rect.width) * 100;
+        }
+        var dragging = false;
+        handle.addEventListener("mousedown", function (e) {
+          dragging = true;
+          e.preventDefault();
+        });
+        document.addEventListener("mouseup", function () {
+          dragging = false;
+        });
+        document.addEventListener("mousemove", function (e) {
+          if (!dragging || stage.dataset.mode !== "slider") return;
+          setSplit(pctFromEvent(e));
+        });
+        handle.addEventListener("touchstart", function () {
+          dragging = true;
+        });
+        document.addEventListener("touchend", function () {
+          dragging = false;
+        });
+        document.addEventListener("touchmove", function (e) {
+          if (!dragging || stage.dataset.mode !== "slider") return;
+          setSplit(pctFromEvent(e));
+        });
+        stage.addEventListener("mousemove", function (e) {
+          if (dragging || stage.dataset.mode !== "slider") return;
+          if (e.target.closest(".cmp-handle-knob")) return;
+          setSplit(pctFromEvent(e));
+        });
+
+        /* 供 Vue（t-radio-group）回调调用：切换对比模式 */
+        window.applyCmpMode = function (mode, opacity) {
+          stage.dataset.mode = mode;
+          if (mode === "slider") setSplit(50);
+          if (mode === "onion")
+            stage.style.setProperty("--cmp-opacity", opacity / 100);
+        };
+        /* 供 Vue（t-slider）回调调用：调节透明度 */
+        window.applyCmpOpacity = function (v) {
+          stage.style.setProperty("--cmp-opacity", v / 100);
+        };
+      })();
+
+      /* === TDesign 组件挂载（切换按钮组 / 滑块） === */
+      (function () {
+        if (!window.Vue || !window.TDesign) return;
+        var createApp = window.Vue.createApp;
+        var reactive = window.Vue.reactive;
+
+        /* 对比区共享状态：mode / opacity（toggle 与 slider 联动） */
+        var cmp = reactive({ mode: "slider", opacity: 60, visible: false });
+
+        function useTD(app) {
+          app.use(window.TDesign);
+          /* t-icon 由 tdesign-vue-next 主包内置；如额外引入图标包则一并注册 */
+          if (window.TDesignIconVueNext) app.use(window.TDesignIconVueNext);
+        }
+
+        /* 对比模式切换 */
+        var cmpEl = document.getElementById("cmpToggle");
+        if (cmpEl) {
+          var cmpApp = createApp({
+            data: function () {
+              return cmp;
+            },
+            methods: {
+              onChange: function (v) {
+                cmp.mode = v;
+                cmp.visible = v === "onion";
+                applyCmpMode(v, cmp.opacity);
+              },
+            },
+          });
+          useTD(cmpApp);
+          cmpApp.mount(cmpEl);
+        }
+
+        /* 透明度滑块 */
+        var ctrlEl = document.getElementById("cmpControls");
+        if (ctrlEl) {
+          var ctrlApp = createApp({
+            data: function () {
+              return cmp;
+            },
+            methods: {
+              onChange: function (v) {
+                cmp.opacity = v;
+                applyCmpOpacity(v);
+              },
+            },
+          });
+          useTD(ctrlApp);
+          ctrlApp.mount(ctrlEl);
+        }
+      })();
+    </script>
+  </body>
+</html>

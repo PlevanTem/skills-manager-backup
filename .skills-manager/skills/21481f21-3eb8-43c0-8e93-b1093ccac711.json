@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "21481f21-3eb8-43c0-8e93-b1093ccac711",
+  "path": "made-to-stick",
+  "path_key": "made-to-stick",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

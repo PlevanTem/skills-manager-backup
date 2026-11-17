@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "8f67e054-43d9-4204-b7c5-a3466334b490",
+  "path": "artifact-template-tactile",
+  "path_key": "artifact-template-tactile",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

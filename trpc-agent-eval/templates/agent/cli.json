@@ -1,0 +1,9 @@
+{
+  "mode": "cli",
+  "config": {
+    "command": ["python3", "/abs/path/to/your_agent.py"],
+    "arg_mode": "stdin",
+    "cwd": "/abs/path/to/workdir",
+    "env": {}
+  }
+}

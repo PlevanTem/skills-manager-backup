@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5e37aaa7-06b2-43a8-8983-1e67aee1d6f7",
+  "path": "ticket-authoring",
+  "path_key": "ticket-authoring",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

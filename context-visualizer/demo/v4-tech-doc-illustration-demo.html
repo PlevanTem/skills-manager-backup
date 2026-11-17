@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEP CME 线程 Buffer 布局 — 技术文档插图（可视化版）</title>
+  <style>
+:root{--bg:#f6f8fb;--bg-soft:#eef3f8;--panel:#fff;--panel-soft:#f7f9fc;--line:#d7dfeb;--text:#162033;--muted:#61738f;--accent:#0f766e;--accent-soft:#f0fdfa;--success:#0f9f6e;--warning:#b7791f;--danger:#dc2626;--max:1080px;--radius:20px;--shadow:0 18px 42px rgba(15,23,42,.08);--font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;--brand-color:#0f766e}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--font);background:radial-gradient(circle at top,rgba(15,118,110,.08),transparent 28%),linear-gradient(180deg,var(--bg),var(--bg-soft));color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+.cv-topbar{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:rgba(255,255,255,.88);border-bottom:1px solid var(--line)}.cv-topbar-inner,.cv-page,.cv-footer{max-width:var(--max);margin:0 auto;padding-left:24px;padding-right:24px}.cv-topbar-inner{min-height:60px;display:flex;align-items:center;gap:16px}.cv-brand{font-weight:800;letter-spacing:.03em;color:var(--accent)}.cv-page{padding-top:42px;padding-bottom:40px}.cv-footer{padding-top:10px;padding-bottom:56px;color:var(--muted);font-size:13px}.cv-footer-card{padding:16px 18px;border-radius:18px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}
+.cv-hero-card,.cv-section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.cv-hero-card{padding:30px 32px;position:relative;overflow:hidden}.cv-hero-card::after{content:"";position:absolute;right:-56px;bottom:-86px;width:220px;height:220px;background:radial-gradient(circle,rgba(15,118,110,.12),transparent 68%);pointer-events:none}
+.cv-badge{display:inline-flex;padding:7px 14px;border-radius:999px;background:var(--accent-soft);border:1px solid rgba(15,118,110,.14);color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}.cv-title{margin:14px 0 8px;font-size:clamp(24px,4vw,38px);line-height:1.1;letter-spacing:-.03em}.cv-subtitle{color:var(--muted);font-size:16px;margin:0 0 12px}.cv-chip{display:inline-flex;min-height:28px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel-soft);color:var(--muted);font-size:12px;font-weight:700}.cv-meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.cv-content{display:grid;gap:22px;margin-top:24px}.cv-section{padding:26px 24px}.cv-section-head{margin-bottom:16px}.cv-section-head h2{margin:0 0 6px;font-size:22px}.cv-section-head p{margin:0;color:var(--muted);font-size:14px}.cv-section-body p{margin:0 0 12px}.cv-section-body code{padding:2px 6px;border-radius:8px;background:var(--panel-soft);border:1px solid var(--line);font-size:.92em}
+.cv-tag-group{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.cv-tag{display:inline-flex;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);background:var(--panel-soft);color:var(--muted)}.cv-tag-accent{color:var(--accent);border-color:rgba(15,118,110,.2);background:var(--accent-soft)}.cv-tag-success{color:var(--success);border-color:rgba(15,159,110,.2);background:rgba(15,159,110,.08)}.cv-tag-warning{color:var(--warning);border-color:rgba(183,121,31,.2);background:rgba(183,121,31,.08)}.cv-tag-danger{color:#dc2626;border-color:rgba(220,38,38,.2);background:rgba(220,38,38,.08)}
+.cv-callout{margin:16px 0;padding:14px 18px;border-radius:16px;border:1px solid rgba(15,118,110,.14);background:var(--accent-soft);color:var(--text);line-height:1.6}.cv-callout-title{font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;color:var(--accent)}.cv-callout-warning{border-color:rgba(183,121,31,.2);background:rgba(183,121,31,.08)}.cv-callout-warning .cv-callout-title{color:var(--warning)}
+.cv-code-block{margin:16px 0;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--panel-soft)}.cv-code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);font-size:12px;font-weight:700;color:var(--muted)}.cv-code-lang{text-transform:uppercase;letter-spacing:.05em}.cv-code-block pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:"SF Mono","Fira Code",monospace;font-size:13px;line-height:1.6;color:var(--text);tab-size:4}.cv-code-block code{background:none;border:none;padding:0;font-size:inherit}
+.cv-table-wrap{margin:16px 0;overflow-x:auto;border-radius:16px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow)}.cv-table{width:100%;border-collapse:collapse;font-size:14px}.cv-table thead{background:var(--panel-soft);border-bottom:2px solid var(--line)}.cv-table th{padding:12px 16px;text-align:left;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);white-space:nowrap}.cv-table td{padding:12px 16px;border-bottom:1px solid var(--line);color:var(--text);vertical-align:top}.cv-table tbody tr:last-child td{border-bottom:none}.cv-table tbody tr:hover{background:var(--panel-soft)}
+
+/* === 可视化架构图组件 === */
+.cv-arch-visual{margin:20px 0;padding:24px;border-radius:16px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}
+.cv-arch-visual-title{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-bottom:20px}
+.cv-arch-container{display:flex;flex-direction:column;gap:16px;align-items:center}
+.cv-arch-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;width:100%}
+.cv-arch-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 18px;border-radius:12px;text-align:center;min-width:120px;border:2px solid var(--accent);background:var(--accent-soft);color:var(--text);position:relative;transition:transform .15s,box-shadow .15s}
+.cv-arch-box:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.cv-arch-box-title{font-weight:800;font-size:14px;margin-bottom:2px}
+.cv-arch-box-desc{font-size:12px;color:var(--muted)}
+.cv-arch-box-badge{position:absolute;top:-8px;right:-8px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800;background:var(--accent);color:#fff}
+.cv-arch-box-primary{border-color:var(--accent);background:var(--accent-soft)}
+.cv-arch-box-success{border-color:var(--success);background:rgba(15,159,110,.08)}
+.cv-arch-box-warning{border-color:var(--warning);background:rgba(183,121,31,.08)}
+.cv-arch-box-danger{border-color:var(--danger);background:rgba(220,38,38,.08)}
+.cv-arch-box-muted{border-color:var(--muted);background:var(--panel-soft);border-style:dashed}
+.cv-arch-box-dark{border-color:var(--text);background:var(--text);color:#fff}.cv-arch-box-dark .cv-arch-box-desc{color:rgba(255,255,255,.7)}
+.cv-arch-group{border:2px solid var(--line);border-radius:16px;padding:16px;background:var(--panel-soft);width:100%;position:relative}
+.cv-arch-group-label{position:absolute;top:-10px;left:16px;padding:2px 12px;border-radius:999px;font-size:11px;font-weight:800;background:var(--panel);border:1px solid var(--line);color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.cv-arch-group-content{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.cv-arch-arrow{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:20px;font-weight:300;min-height:28px;flex-direction:column;gap:2px}
+.cv-arch-arrow-down::before{content:"▼"}.cv-arch-arrow-right::before{content:"▶"}.cv-arch-arrow-left::before{content:"◀"}.cv-arch-arrow-bidir::before{content:"⇅"}
+.cv-arch-arrow-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.03em}
+
+/* === 流程可视化 === */
+.cv-flow-visual{margin:20px 0;padding:24px;border-radius:16px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}
+.cv-flow-visual-title{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-bottom:20px}
+.cv-flow-container{display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center}
+.cv-flow-node{padding:12px 20px;border-radius:12px;text-align:center;min-width:100px;font-size:13px;font-weight:700;position:relative;border:2px solid var(--accent);background:var(--accent-soft);color:var(--text)}
+.cv-flow-node-start{border-radius:999px;background:var(--accent);color:#fff;border-color:var(--accent)}
+.cv-flow-node-end{border-radius:999px;background:var(--success);color:#fff;border-color:var(--success)}
+.cv-flow-node-process{border-color:var(--accent);background:var(--accent-soft)}
+.cv-flow-connector{display:flex;align-items:center;padding:0 6px;color:var(--muted);font-size:16px}
+.cv-flow-connector::after{content:"→";font-weight:300}
+.cv-flow-container-vertical{flex-direction:column;align-items:center}
+.cv-flow-container-vertical .cv-flow-connector{padding:4px 0}
+.cv-flow-container-vertical .cv-flow-connector::after{content:"↓"}
+
+/* === 数据结构可视化 === */
+.cv-struct-visual{margin:20px 0;padding:24px;border-radius:16px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);overflow-x:auto}
+.cv-struct-visual-title{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-bottom:20px}
+.cv-struct-bar{display:flex;border-radius:10px;overflow:hidden;border:2px solid var(--line);min-height:56px;margin-bottom:24px}
+.cv-struct-field{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 6px;border-right:1px solid var(--line);position:relative;min-width:48px;text-align:center}
+.cv-struct-field:last-child{border-right:none}
+.cv-struct-field-name{font-size:11px;font-weight:800;color:var(--text);white-space:nowrap}
+.cv-struct-field-bits{font-size:10px;color:var(--muted)}
+.cv-struct-field-offset{position:absolute;bottom:-18px;font-size:9px;color:var(--muted);white-space:nowrap}
+.cv-struct-field-primary{background:var(--accent-soft)}
+.cv-struct-field-success{background:rgba(15,159,110,.10)}
+.cv-struct-field-warning{background:rgba(183,121,31,.10)}
+.cv-struct-field-danger{background:rgba(220,38,38,.10)}
+.cv-struct-field-muted{background:var(--panel-soft)}
+.cv-struct-card{border:2px solid var(--line);border-radius:12px;overflow:hidden;margin:12px 0}
+.cv-struct-card-header{padding:10px 16px;background:var(--panel-soft);border-bottom:2px solid var(--line);font-weight:800;font-size:13px;color:var(--accent);display:flex;align-items:center;gap:8px}
+.cv-struct-card-header code{font-size:12px;font-weight:400;color:var(--text)}
+.cv-struct-card-body{padding:0}
+.cv-struct-card-row{display:grid;grid-template-columns:120px 80px 1fr;padding:8px 16px;border-bottom:1px solid var(--line);font-size:13px;align-items:center}
+.cv-struct-card-row:last-child{border-bottom:none}
+.cv-struct-card-row:hover{background:var(--panel-soft)}
+.cv-struct-card-field{font-weight:700;color:var(--text);font-family:"SF Mono","Fira Code",monospace;font-size:12px}
+.cv-struct-card-type{color:var(--accent);font-size:12px}
+.cv-struct-card-desc{color:var(--muted);font-size:12px}
+
+/* === 层叠展示 === */
+.cv-layer-stack{margin:20px 0;display:flex;flex-direction:column;gap:0;align-items:center}
+.cv-layer-item{width:100%;max-width:600px;padding:14px 20px;text-align:center;border:2px solid var(--line);position:relative;font-weight:700;font-size:14px;color:var(--text)}
+.cv-layer-item:first-child{border-radius:12px 12px 0 0}
+.cv-layer-item:last-child{border-radius:0 0 12px 12px}
+.cv-layer-item+.cv-layer-item{border-top:none}
+.cv-layer-item-desc{font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}
+.cv-layer-item-l1{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.3)}
+.cv-layer-item-l2{background:rgba(15,159,110,.08);border-color:rgba(15,159,110,.3)}
+.cv-layer-item-l3{background:rgba(183,121,31,.08);border-color:rgba(183,121,31,.3)}
+.cv-layer-item-l4{background:rgba(220,38,38,.08);border-color:rgba(220,38,38,.3)}
+.cv-layer-item-l5{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.3)}
+.cv-layer-item-l6{background:var(--panel-soft);border-color:var(--line)}
+
+/* === 图例 === */
+.cv-legend{display:flex;flex-wrap:wrap;gap:16px;margin:16px 0;padding:12px 16px;border-radius:12px;background:var(--panel-soft);border:1px solid var(--line)}
+.cv-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.cv-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.cv-topbar{display:none!important}body{background:#fff!important}.cv-section,.cv-arch-visual,.cv-flow-visual,.cv-struct-visual,.cv-code-block,.cv-table-wrap{box-shadow:none!important;break-inside:avoid}}
+  </style>
+</head>
+<body class="theme-default-light cv-brand-custom">
+  <header class="cv-topbar"><div class="cv-topbar-inner"><div class="cv-brand">TNIC · XLine Docs</div></div></header>
+  <div class="cv-page">
+    <!-- Hero -->
+    <div class="cv-hero-card">
+      <span class="cv-badge">技术文档插图 · 可视化</span>
+      <h1 class="cv-title">MEP CME 线程 Buffer 布局</h1>
+      <p class="cv-subtitle">DPE/MEP 架构中 CME 线程的输入输出 Buffer 结构与数据流</p>
+      <div class="cv-meta-row">
+        <span class="cv-chip">📖 Chapter 4: 硬件接口说明</span>
+        <span class="cv-chip">🏷 MEP · CME · Buffer</span>
+      </div>
+    </div>
+
+    <main class="cv-content">
+      <!-- 1. Architecture Diagram (Visual) -->
+      <section class="cv-section">
+        <div class="cv-section-head"><h2>整体架构图</h2><p>CME 线程 Buffer 数据流向（CSS 可视化）</p></div>
+        <div class="cv-section-body">
+          <div class="cv-arch-visual">
+            <div class="cv-arch-visual-title">CME Thread Buffer Data Flow</div>
+            <div class="cv-arch-container">
+              <!-- 输入数据源 -->
+              <div class="cv-arch-group">
+                <span class="cv-arch-group-label">PIPE → MEP 送入数据</span>
+                <div class="cv-arch-group-content">
+                  <div class="cv-arch-box cv-arch-box-primary">
+                    <div class="cv-arch-box-title">Packet Header</div>
+                    <div class="cv-arch-box-desc">256 Byte · 报文头 cell</div>
+                    <span class="cv-arch-box-badge">2048 bit</span>
+                  </div>
+                  <div class="cv-arch-box cv-arch-box-success">
+                    <div class="cv-arch-box-title">pipe_mep_meta</div>
+                    <div class="cv-arch-box-desc">64 Byte · PAE 解析结果</div>
+                    <span class="cv-arch-box-badge">512 bit</span>
+                  </div>
+                  <div class="cv-arch-box cv-arch-box-warning">
+                    <div class="cv-arch-box-title">pipe_mep_result</div>
+                    <div class="cv-arch-box-desc">32 Byte · PIPE 查表结果</div>
+                    <span class="cv-arch-box-badge">256 bit</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 向下箭头 -->
+              <div class="cv-arch-arrow cv-arch-arrow-down">
+                <span class="cv-arch-arrow-label">填入 Input Buffers（只读）</span>
+              </div>
+
+              <!-- Input Buffers -->
+              <div class="cv-arch-group">
+                <span class="cv-arch-group-label">Input Buffers (Read-Only)</span>
+                <div class="cv-arch-group-content">
+                  <div class="cv-arch-box cv-arch-box-primary">
+                    <div class="cv-arch-box-title">PB (Packet Buffer)</div>
+                    <div class="cv-arch-box-desc">256B (384B 扩展)<br>cursor: 0 ~ 2047 bit</div>
+                  </div>
+                  <div class="cv-arch-box cv-arch-box-success">
+                    <div class="cv-arch-box-title">MB (Meta Buffer)</div>
+                    <div class="cv-arch-box-desc">96B = 768 bit<br>meta(512b) + result(256b)</div>
+                  </div>
+                  <div class="cv-arch-box cv-arch-box-muted">
+                    <div class="cv-arch-box-title">RB (Result Buffer)</div>
+                    <div class="cv-arch-box-desc">协处理器查表<br>返回结果</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 处理核心 -->
+              <div class="cv-arch-arrow cv-arch-arrow-down">
+                <span class="cv-arch-arrow-label">CME 微码处理</span>
+              </div>
+              <div class="cv-arch-box cv-arch-box-dark" style="width:100%;max-width:500px;padding:18px;">
+                <div class="cv-arch-box-title">CME 微码处理引擎</div>
+                <div class="cv-arch-box-desc">读 PB/MB → 组 Key (KB) → IO 查表 → RB 接收 → 写 NHB/NMB</div>
+              </div>
+
+              <!-- 向下箭头 -->
+              <div class="cv-arch-arrow cv-arch-arrow-down">
+                <span class="cv-arch-arrow-label">写入 Output Buffers（可写）</span>
+              </div>
+
+              <!-- Output Buffers -->
+              <div class="cv-arch-group">
+                <span class="cv-arch-group-label">Output Buffers (Writable)</span>
+                <div class="cv-arch-group-content">
+                  <div class="cv-arch-box cv-arch-box-danger">
+                    <div class="cv-arch-box-title">NHB (New Head)</div>
+                    <div class="cv-arch-box-desc">384B · 编辑后报文头<br>cursor: 0 ~ 3071 bit</div>
+                  </div>
+                  <div class="cv-arch-box cv-arch-box-danger">
+                    <div class="cv-arch-box-title">NMB (New Meta)</div>
+                    <div class="cv-arch-box-desc">96B · mep_pol_result 格式<br>cursor: 0 ~ 767 bit</div>
+                  </div>
+                  <div class="cv-arch-box cv-arch-box-muted">
+                    <div class="cv-arch-box-title">KB (Key Buffer)</div>
+                    <div class="cv-arch-box-desc">变长 · 组装查表 key</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 最终输出 -->
+              <div class="cv-arch-arrow cv-arch-arrow-down">
+                <span class="cv-arch-arrow-label">提交到 POL / PKE</span>
+              </div>
+              <div class="cv-arch-box cv-arch-box-success" style="width:100%;max-width:400px;">
+                <div class="cv-arch-box-title">MEP → POL/PKE 输出</div>
+                <div class="cv-arch-box-desc">NHB 新报文头 (384B) + NMB mep_pol_result</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 图例 -->
+          <div class="cv-legend">
+            <div class="cv-legend-item"><span class="cv-legend-dot" style="background:var(--accent)"></span>Packet 相关</div>
+            <div class="cv-legend-item"><span class="cv-legend-dot" style="background:var(--success)"></span>Meta 信息</div>
+            <div class="cv-legend-item"><span class="cv-legend-dot" style="background:var(--warning)"></span>PIPE 结果</div>
+            <div class="cv-legend-item"><span class="cv-legend-dot" style="background:var(--danger)"></span>Output 可写</div>
+            <div class="cv-legend-item"><span class="cv-legend-dot" style="background:var(--muted)"></span>辅助 Buffer</div>
+            <div class="cv-legend-item"><span class="cv-legend-dot" style="background:var(--text)"></span>处理核心</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Memory Layout (Struct Visual) -->
+      <section class="cv-section">
+        <div class="cv-section-head"><h2>Meta Buffer 内存布局</h2><p>96 Byte = pipe_mep_meta (64B) + pipe_mep_result (32B)</p></div>
+        <div class="cv-section-body">
+          <div class="cv-struct-visual">
+            <div class="cv-struct-visual-title">MB 96 Byte 内存映射</div>
+            <div class="cv-struct-bar">
+              <div class="cv-struct-field cv-struct-field-primary" style="flex:64">
+                <span class="cv-struct-field-name">pipe_mep_meta</span>
+                <span class="cv-struct-field-bits">64 Byte / 512 bit</span>
+                <span class="cv-struct-field-offset">offset 0</span>
+              </div>
+              <div class="cv-struct-field cv-struct-field-warning" style="flex:32">
+                <span class="cv-struct-field-name">pipe_mep_result</span>
+                <span class="cv-struct-field-bits">32 Byte / 256 bit</span>
+                <span class="cv-struct-field-offset">offset 512</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 关键域段结构体卡片 -->
+          <div class="cv-struct-visual" style="margin-top:12px">
+            <div class="cv-struct-visual-title">pipe_mep_meta 关键域段</div>
+            <div class="cv-struct-card">
+              <div class="cv-struct-card-header"><code>struct pipe_mep_meta</code> · 64 Byte (512 bit)</div>
+              <div class="cv-struct-card-body">
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">src_type</span><span class="cv-struct-card-type">2 bit</span><span class="cv-struct-card-desc">TX: 0=VPE, 1=RPE, 2=Loopback; RX: 0=MAC Port, 2=LB</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">src_vif</span><span class="cv-struct-card-type">14 bit</span><span class="cv-struct-card-desc">源 VIF，全局编址 0~8K-1</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">pkt_len</span><span class="cv-struct-card-type">14 bit</span><span class="cv-struct-card-desc">报文长度</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">pkt_hdrptr</span><span class="cv-struct-card-type">14 bit</span><span class="cv-struct-card-desc">报文头 cell 地址</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">flowid</span><span class="cv-struct-card-type">7 bit</span><span class="cv-struct-card-desc">PIPE hash 计算的流号，用于 MEP 保序</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">l3_type</span><span class="cv-struct-card-type">4 bit</span><span class="cv-struct-card-desc">IPv4=2, IPv6=4, ARP=5</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">l4_type</span><span class="cv-struct-card-type">4 bit</span><span class="cv-struct-card-desc">TCP=2, UDP=3, ICMP=0</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">tunnel_type</span><span class="cv-struct-card-type">4 bit</span><span class="cv-struct-card-desc">VXLAN=1, Geneve=2, GRE=4</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cv-struct-visual" style="margin-top:12px">
+            <div class="cv-struct-visual-title">pipe_mep_result 关键域段</div>
+            <div class="cv-struct-card">
+              <div class="cv-struct-card-header"><code>struct pipe_mep_result</code> · 32 Byte (256 bit)</div>
+              <div class="cv-struct-card-body">
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">drop_flag</span><span class="cv-struct-card-type">1 bit</span><span class="cv-struct-card-desc">1=丢弃</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">lk_destination</span><span class="cv-struct-card-type">23 bit</span><span class="cv-struct-card-desc">目的地: RSS(1)+RPE(1)+SPD(1)+lag(1)+vnic(13)+qid(6)</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">lk_dest_type</span><span class="cv-struct-card-type">1 bit</span><span class="cv-struct-card-desc">0=单播, 1=组播</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">metadata</span><span class="cv-struct-card-type">32 bit</span><span class="cv-struct-card-desc">自定义 metadata，可携带至下次查表</span></div>
+                <div class="cv-struct-card-row"><span class="cv-struct-card-field">new_state</span><span class="cv-struct-card-type">8 bit</span><span class="cv-struct-card-desc">CT new state</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cv-tag-group">
+            <span class="cv-tag cv-tag-accent">L3 Type: IPv4=2, IPv6=4, ARP=5</span>
+            <span class="cv-tag cv-tag-success">L4 Type: TCP=2, UDP=3, ICMP=0</span>
+            <span class="cv-tag cv-tag-warning">Tunnel: VXLAN=1, Geneve=2, GRE=4</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Processing Flow -->
+      <section class="cv-section">
+        <div class="cv-section-head"><h2>报文处理流程</h2><p>CME 微码执行的典型数据处理路径</p></div>
+        <div class="cv-section-body">
+          <div class="cv-flow-visual">
+            <div class="cv-flow-visual-title">CME Processing Pipeline</div>
+            <div class="cv-flow-container">
+              <div class="cv-flow-node cv-flow-node-start">PIPE 送 MEP</div>
+              <div class="cv-flow-connector"></div>
+              <div class="cv-flow-node cv-flow-node-process">读 PB/MB</div>
+              <div class="cv-flow-connector"></div>
+              <div class="cv-flow-node" style="border-color:var(--warning);background:rgba(183,121,31,.08)">组 Key (KB)</div>
+              <div class="cv-flow-connector"></div>
+              <div class="cv-flow-node cv-flow-node-process">IO 查表</div>
+              <div class="cv-flow-connector"></div>
+              <div class="cv-flow-node" style="border-color:var(--danger);background:rgba(220,38,38,.08)">读 RB 结果</div>
+              <div class="cv-flow-connector"></div>
+              <div class="cv-flow-node" style="border-color:var(--danger);background:rgba(220,38,38,.08)">写 NHB/NMB</div>
+              <div class="cv-flow-connector"></div>
+              <div class="cv-flow-node cv-flow-node-end">送 POL/PKE</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Layer Stack -->
+      <section class="cv-section">
+        <div class="cv-section-head"><h2>DPE 模块层次</h2><p>RX 方向报文从 MAC 到 MEP 的处理层级</p></div>
+        <div class="cv-section-body">
+          <div class="cv-layer-stack">
+            <div class="cv-layer-item cv-layer-item-l1">
+              MEP (Micro Engine Pool)
+              <div class="cv-layer-item-desc">C 可编程处理器子系统 · 4 Quark × 8 CME · RISC-V 架构</div>
+            </div>
+            <div class="cv-layer-item cv-layer-item-l2">
+              PIPE (Pipeline 查表)
+              <div class="cv-layer-item-desc">4 级子 PIPE · Classify → Profile → EM → WC</div>
+            </div>
+            <div class="cv-layer-item cv-layer-item-l3">
+              PAE (Parser Engine)
+              <div class="cv-layer-item-desc">P4-like 报文解析 · 提取 256 byte 报文头域段</div>
+            </div>
+            <div class="cv-layer-item cv-layer-item-l4">
+              PB (Packet Buffer)
+              <div class="cv-layer-item-desc">4MB 报文缓存 · 16 bank × 256KB · 以 cell(256B) 管理</div>
+            </div>
+            <div class="cv-layer-item cv-layer-item-l5">
+              MACIF (MAC 接口)
+              <div class="cv-layer-item-desc">RX 方向报文接收 · PB 写入和优先级调度</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Buffer Details Table -->
+      <section class="cv-section">
+        <div class="cv-section-head"><h2>Buffer 详细规格</h2><p>各 Buffer 的大小、地址范围和用途</p></div>
+        <div class="cv-section-body">
+          <div class="cv-table-wrap">
+            <table class="cv-table">
+              <thead>
+                <tr><th>Buffer</th><th>类型</th><th>大小</th><th>Cursor 范围</th><th>说明</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>PB</strong> (Packet Buffer)</td><td>Input 只读</td><td>256B (384B 扩展)</td><td>0 ~ 2047 bit</td><td>原始报文头 cell，PIPE 透传</td></tr>
+                <tr><td><strong>MB</strong> (Meta Buffer)</td><td>Input 只读</td><td>96B = 768 bit</td><td>0 ~ 767 bit</td><td>高 512bit = meta，低 256bit = result</td></tr>
+                <tr><td><strong>RB</strong> (Result Buffer)</td><td>Input 只读</td><td>查表返回大小</td><td>-</td><td>协处理器(LMEM/LCAM/TSE/OCM)返回结果</td></tr>
+                <tr><td><strong>NHB</strong> (New Head Buffer)</td><td>Output 可写</td><td>384B</td><td>0 ~ 3071 bit</td><td>编辑后的新报文头</td></tr>
+                <tr><td><strong>NMB</strong> (New Meta Buffer)</td><td>Output 可写</td><td>96B = 768 bit</td><td>0 ~ 767 bit</td><td>编辑后的 meta（mep_pol_result 格式）</td></tr>
+                <tr><td><strong>KB</strong> (Key Buffer)</td><td>Output 可写</td><td>变长</td><td>-</td><td>组装查表 key 用</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cv-callout cv-callout-warning">
+            <div class="cv-callout-title">⚠️ Cursor 注意事项</div>
+            每个 Buffer 有独立的 cursor，cursor 单位是 <strong>bit</strong>（不是 byte！）。支持 <code>set_cursor</code>（绝对寻址）和 <code>add_cursor</code>（相对偏移）两种操作。
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Code Example -->
+      <section class="cv-section">
+        <div class="cv-section-head"><h2>微码读取示例</h2><p>CME 线程中读取 Meta Buffer 的典型代码片段</p></div>
+        <div class="cv-section-body">
+          <div class="cv-code-block">
+            <div class="cv-code-header"><span class="cv-code-lang">C / MEP Microcode</span><span>read_meta_example.c</span></div>
+            <pre><code>// 读取 pipe_mep_meta 中的 src_type 和 src_vif
+set_cursor(MB, 0);                  // cursor 定位到 meta 起始
+uint8_t  src_type = read_mb(2);     // 读取 2 bit
+uint16_t src_vif  = read_mb(14);    // 读取 14 bit
+
+// 跳到 pkt_len 域段
+set_cursor(MB, 64);                 // 绝对定位 bit 64
+uint16_t pkt_len = read_mb(14);     // 14 bit 报文长度
+
+// 读取 pipe_mep_result 中的 destination
+set_cursor(MB, 514);                // result 区 offset 512 + 2
+uint32_t destination = read_mb(23); // 23 bit 目的地
+
+// 写 New Meta Buffer (mep_pol_result)
+set_cursor(NMB, 0);
+write_nmb(1, drop_flag);           // 1 bit 丢弃标记
+write_nmb(1, dest_type);           // 1 bit 单播/组播
+write_nmb(23, new_destination);    // 23 bit 新目的地</code></pre>
+          </div>
+
+          <div class="cv-callout">
+            <div class="cv-callout-title">💡 提示</div>
+            所有 <code>read_mb</code>/<code>write_nmb</code> 操作会自动推进 cursor。如果需要跳转到非连续位置，需先调用 <code>set_cursor</code>。RB 是查表返回结果的读取 buffer，每次 IO 命令返回后自动填充。
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <footer class="cv-footer">
+    <div class="cv-footer-card">TNIC / XLine Docs · 技术文档插图 · CME Buffer Layout · Powered by Context Visualizer v4</div>
+  </footer>
+</body>
+</html>

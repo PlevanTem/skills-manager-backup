@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "dda454f2-4efb-4fd4-8cab-82292385807f",
+  "path": "pm-audit",
+  "path_key": "pm-audit",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

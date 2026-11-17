@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "d103269f-5bd5-4b71-8ebd-a58d6ca5d940",
+  "path": "ai-unit-economics",
+  "path_key": "ai-unit-economics",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

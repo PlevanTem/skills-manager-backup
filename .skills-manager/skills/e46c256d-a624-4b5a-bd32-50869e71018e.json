@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "e46c256d-a624-4b5a-bd32-50869e71018e",
+  "path": "ai-use-case-scoping",
+  "path_key": "ai-use-case-scoping",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

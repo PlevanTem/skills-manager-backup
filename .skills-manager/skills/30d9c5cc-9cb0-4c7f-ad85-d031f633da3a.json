@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "30d9c5cc-9cb0-4c7f-ad85-d031f633da3a",
+  "path": "pre-mortem",
+  "path_key": "pre-mortem",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

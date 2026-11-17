@@ -1,0 +1,118 @@
+# 执行保护配置 (protection-config)
+
+> 被 SKILL.md Stage 6 引用，定义增量更新和保护机制的详细配置
+
+---
+
+## 增量更新流程
+
+```yaml
+incremental_update:
+  triggers:
+    - "新增知识源文件"
+    - "已有文件内容变更"
+    - "知识库数据更新"
+    - "人工纠错反馈"
+
+  process:
+    step_1: "变更检测 — 识别新增/修改/删除的知识"
+    step_2: "影响分析 — 评估变更对现有 KG 的影响范围"
+    step_3: "增量提取 — 仅对变更部分执行提取"
+    step_4: "合并更新 — 将新三元组合并到现有 KG"
+    step_5: "冲突解决 — 如有冲突，按置信度+时间戳决定"
+    step_6: "增量验证 — 仅验证变更影响的部分"
+    step_7: "记录日志 — 记录变更内容和原因"
+
+  conflict_resolution:
+    strategy: "新数据置信度 > 旧数据置信度 → 采用新数据"
+    manual_review: "置信度相同时，标记为待人工审核"
+```
+
+---
+
+## 检查点机制
+
+```yaml
+checkpoints:
+  - stage: 1
+    file: "execution-plan.md"
+    description: "规划完成"
+  - stage: 2
+    file: "kg-triples-raw.yaml"
+    description: "提取完成"
+  - stage: 3
+    files: ["kg-entities.yaml", "kg-relations.yaml", "kg-rules.yaml", "kg-flows.yaml", "kg-glossary.yaml", "kg-entities.md", "kg-relations.md", "kg-rules.md", "kg-flows.md", "kg-glossary.md", "knowledge-graph.html", "kg-unconnected.md", "kg-entity-mapping.md", "kg-synonym-groups.md"]
+    description: "生成完成"
+  - stage: 4
+    file: "kg-validation.yaml"
+    description: "验证完成"
+  - stage: 5
+    file: "kg-score.yaml"
+    description: "评分完成"
+
+recovery: "如果中断，从最近的检查点恢复"
+```
+
+---
+
+## 回滚机制
+
+```yaml
+rollback:
+  pre_update: "每次更新前备份当前 KG 到 archive/"
+  auto_rollback: "更新后自检不通过 → 自动回滚"
+  retention: "保留最近 3 个版本"
+```
+
+---
+
+## 并发保护
+
+```yaml
+concurrency:
+  lock_file: ".kg-lock"
+  description: "防止多次更新同时执行导致数据不一致"
+```
+
+---
+
+## 上下文溢出保护
+
+```yaml
+context_overflow:
+  strategy: "按业务子域分批处理"
+  batch_save: "每批处理完成后保存中间结果到文件"
+  batch_load: "下一批开始时从文件加载，不依赖上下文记忆"
+  skill_dependency: "使用 staged-task-guard skill 进行分段保护"
+```
+
+---
+
+## 本体更新原则
+
+```yaml
+ontology_update:
+  rules:
+    - "新增实体类型时，必须指定其在类层次中的位置"
+    - "新增关系类型时，必须定义域(domain)和范围(range)"
+    - "不删除已有本体元素，只标记为 deprecated"
+    - "每次更新记录变更日志（who/when/what/why）"
+    - "向后兼容：新增不影响已有查询"
+```
+
+---
+
+## 变更日志格式
+
+```yaml
+changelog_template:
+  - version: "X.Y.Z"
+    date: "YYYY-MM-DD"
+    author: "who"
+    changes:
+      - type: "ADD/UPDATE/FIX/DEPRECATE"
+        description: "what changed"
+        affected_domains: ["domain1", "domain2"]
+        affected_entities: ["E_xxx"]
+        affected_relations: ["R_xxx"]
+```

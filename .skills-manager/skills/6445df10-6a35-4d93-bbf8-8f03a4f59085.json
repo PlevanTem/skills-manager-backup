@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "6445df10-6a35-4d93-bbf8-8f03a4f59085",
+  "path": "great-pm",
+  "path_key": "great-pm",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "scenario_id": "a506af25-1d63-4bed-b80d-c9f562fae6fb",
+  "name": "clean",
+  "description": "干净环境",
+  "icon": "briefcase",
+  "sort_order": 999
+}

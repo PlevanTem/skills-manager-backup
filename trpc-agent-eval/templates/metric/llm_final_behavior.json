@@ -1,0 +1,17 @@
+{
+  "metric_name": "llm_final_behavior",
+  "threshold": 0.8,
+  "criterion": {
+    "llmJudge": {
+      "judge_model": {
+        "provider_name": "openai",
+        "model_name": "${MODEL:glm_flash}",
+        "base_url": "${MODEL:glm_flash}",
+        "api_key": "${MODEL:glm_flash}",
+        "generation_config": { "temperature": 0.0 }
+      },
+      "tool_instruction": "你可以调用提供的工具来核验 Agent 最终是否达成了预期的副作用（如成功下单、成功写入）。",
+      "models_aggregator": "all_pass"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "40b41f23-bd53-4b8c-8a2e-0b994f8f3bab",
+  "path": "climate-mrv",
+  "path_key": "climate-mrv",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

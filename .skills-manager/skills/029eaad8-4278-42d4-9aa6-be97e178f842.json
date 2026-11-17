@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "029eaad8-4278-42d4-9aa6-be97e178f842",
+  "path": "3d-stack-selector",
+  "path_key": "3d-stack-selector",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

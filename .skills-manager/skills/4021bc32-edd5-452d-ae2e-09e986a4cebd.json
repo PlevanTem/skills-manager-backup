@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "4021bc32-edd5-452d-ae2e-09e986a4cebd",
+  "path": "ai-ux-patterns",
+  "path_key": "ai-ux-patterns",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

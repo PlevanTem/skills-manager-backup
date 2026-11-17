@@ -1,0 +1,19 @@
+{
+  "metric_name": "tool_trajectory_avg_score",
+  "threshold": 1.0,
+  "criterion": {
+    "toolTrajectory": {
+      "order_sensitive": false,
+      "subset_matching": false,
+      "default": {
+        "name": { "match": "exact" },
+        "arguments": { "match": "exact", "number_tolerance": 1e-6 }
+      },
+      "overrides": {
+        "get_weather": {
+          "arguments": { "match": "exact", "ignore_tree": { "request_id": true } }
+        }
+      }
+    }
+  }
+}

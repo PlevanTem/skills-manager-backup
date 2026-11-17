@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "a0cd7668-f973-4888-a956-78672c1e3352",
+  "path": "inspired-product",
+  "path_key": "inspired-product",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

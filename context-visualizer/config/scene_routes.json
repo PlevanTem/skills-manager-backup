@@ -1,0 +1,238 @@
+{
+  "defaults": {
+    "scene": "generic-summary",
+    "theme": "light",
+    "layout": "page",
+    "side_toc": true,
+    "side_toc_description": "左侧导航栏是唯一章节导航方式（PPT模式除外），由 interactive.js 自动从 section 标题生成。topbar 只放品牌标识，不放 nav 导航链接。"
+  },
+  "brand": {
+    "name": "Context Visualizer",
+    "logo": "",
+    "team": "",
+    "primary_color": "#2563eb",
+    "description": "可通过 :root 中的 --brand-name, --brand-color 覆盖"
+  },
+  "scenes": {
+    "internal-report": {
+      "label": "内部汇报",
+      "description": "强调进展、价值、风险和下一步动作",
+      "aliases": ["汇报", "项目汇报", "阶段汇报", "内部同步", "项目总结"],
+      "variants": ["结论型", "方案说明型", "进展同步型"],
+      "template": {
+        "recommended_components": ["hero", "metric-row", "progress-bar", "timeline", "comparison", "callout", "steps"],
+        "page_structure": [
+          "hero-single（标题 + 关键结论 + 元信息）",
+          "metric-row（核心指标卡片 3-5 个）",
+          "progress-bar（总进度 / 各模块进度）",
+          "section: 背景与目标",
+          "section: 完成情况（table / timeline）",
+          "section: 风险与问题（callout-warning / risk-matrix）",
+          "section: 下一步计划（steps）"
+        ]
+      }
+    },
+    "weekly-report": {
+      "label": "周报/月报",
+      "description": "按周期汇总工作成果、进展和计划，突出量化数据",
+      "aliases": ["周报", "月报", "周总结", "月总结", "weekly", "monthly", "本周工作", "工作周报", "工作月报"],
+      "variants": ["个人周报型", "团队周报型", "月度总结型"],
+      "template": {
+        "recommended_components": ["hero", "metric-row", "progress-bar", "kanban", "table", "gantt", "callout"],
+        "page_structure": [
+          "hero（周期 + 团队/个人 + 一句话总结）",
+          "metric-row（完成任务数、代码行数、Bug修复数 等关键指标）",
+          "section: 本周完成（kanban 或 table）",
+          "section: 进行中事项（kanban / progress-bar）",
+          "section: 下周计划（gantt 或 steps）",
+          "section: 风险与阻塞项（callout-warning / risk-matrix）",
+          "footer（周期 + 团队标识）"
+        ]
+      }
+    },
+    "meeting-notes": {
+      "label": "会议纪要",
+      "description": "记录会议要点、决议、待办和参会人",
+      "aliases": ["会议纪要", "会议记录", "会议总结", "meeting notes", "meeting minutes", "开会记录", "会议"],
+      "variants": ["标准纪要型", "决策记录型", "技术评审记录型"],
+      "template": {
+        "recommended_components": ["hero", "table", "callout", "steps", "tag-group", "timeline"],
+        "page_structure": [
+          "hero-single（会议标题 + 时间地点 + 参会人 chips + 关键决议）",
+          "section: 议题概要（带编号的议题列表）",
+          "section: 讨论要点（timeline 按议题记录）",
+          "section: 决议事项（callout-success 高亮 + table）",
+          "section: 待办跟踪（table: 事项/负责人/截止日期/状态 tag）",
+          "callout-info: 下次会议安排"
+        ]
+      }
+    },
+    "design-review": {
+      "label": "方案评审",
+      "description": "技术方案评审、设计文档 review，突出方案对比和决策",
+      "aliases": ["方案评审", "设计评审", "技术评审", "design review", "方案对比", "技术方案", "架构评审", "review"],
+      "variants": ["方案对比型", "单方案详述型", "评审记录型"],
+      "template": {
+        "recommended_components": ["hero", "comparison", "mermaid", "risk-matrix", "table", "callout", "metric-row"],
+        "page_structure": [
+          "hero-single（方案名称 + 评审结论 + 评审人 chips）",
+          "section: 背景与目标",
+          "section: 方案概述（mermaid 架构图）",
+          "section: 方案对比（comparison 或 table 多方案对比）",
+          "section: 优劣分析（risk-matrix / metric-row 各维度打分）",
+          "section: 推荐方案（callout-success + 理由）",
+          "section: 遗留问题与 Action Items（steps / table）"
+        ]
+      }
+    },
+    "project-dashboard": {
+      "label": "项目仪表盘",
+      "description": "全景式项目状态看板，集中展示进度、资源、风险",
+      "aliases": ["项目仪表盘", "dashboard", "项目看板", "项目状态", "项目总览", "看板", "仪表盘"],
+      "variants": ["进度看板型", "全景仪表盘型", "风险看板型"],
+      "template": {
+        "recommended_components": ["hero", "metric-row", "progress-bar", "kanban", "gantt", "risk-matrix", "chart", "table"],
+        "page_structure": [
+          "hero-single（项目名 + 状态 badge + 更新时间）",
+          "metric-row（总进度、剩余天数、人力投入、Bug 数）",
+          "section: 里程碑甘特图（gantt）",
+          "section: 任务看板（kanban: Todo/Doing/Done）",
+          "section: 风险矩阵（risk-matrix）",
+          "section: 近期趋势图（chart: 燃尽图/缺陷趋势）",
+          "section: 关键事项明细（table）"
+        ]
+      }
+    },
+    "tech-doc-illustration": {
+      "label": "技术文档插图",
+      "description": "为技术文档生成可视化插图，默认使用 CSS 可视化方式（彩色块、箭头、Grid布局），除非用户明确要求 ASCII 显示",
+      "aliases": ["技术文档插图", "文档插图", "插图", "illustration", "技术图示", "画图", "画个图", "架构图", "技术文章插图", "文章插图", "用于截图", "插入文章", "截图用", "帮我画个图", "生成一个插图", "HTML 插图"],
+      "variants": ["架构图型", "流程图型", "数据结构图型", "交互时序型"],
+      "rendering_mode": {
+        "default": "visual",
+        "visual_description": "使用 CSS 彩色块 + 箭头 + Grid 布局绘制（arch-visual / flow-visual / struct-visual / layer-stack）",
+        "ascii_triggers": ["保持ASCII", "ASCII风格", "文本方式", "纯文本图", "monospace风格"],
+        "ascii_description": "使用 .arch-diagram 等宽字体 + white-space:pre 方式展示"
+      },
+      "article_illustration_mode": {
+        "description": "文章插图模式：截图友好，纯白背景，紧凑布局，无外部依赖",
+        "enabled_by_default": true,
+        "body_class": "cv-article-illustration",
+        "overrides": {
+          "--bg": "#ffffff",
+          "--panel": "#ffffff",
+          "--max": "680px",
+          "--radius": "8px",
+          "--shadow": "none"
+        },
+        "typography": {
+          "title": "18-20px",
+          "body": "14-15px",
+          "caption": "≥12px"
+        },
+        "constraints": {
+          "no_topbar": true,
+          "no_footer": true,
+          "no_nav": true,
+          "no_side_toc": true,
+          "no_js": true,
+          "no_external_cdn": true,
+          "no_animation": true,
+          "max_width_range": "500-800px",
+          "recommended_width": "600-700px"
+        },
+        "color_palette": {
+          "blue": {"fg": "#3B82F6", "bg": "#EFF6FF"},
+          "green": {"fg": "#10B981", "bg": "#ECFDF5"},
+          "orange": {"fg": "#F59E0B", "bg": "#FFFBEB"},
+          "purple": {"fg": "#8B5CF6", "bg": "#F5F3FF"},
+          "red": {"fg": "#EF4444", "bg": "#FEF2F2"},
+          "gray": {"fg": "#6B7280", "bg": "#F9FAFB"}
+        }
+      },
+      "template": {
+        "recommended_components": ["arch-visual", "flow-visual", "struct-visual", "layer-stack", "mermaid", "figure", "callout", "table", "code-block"],
+        "page_structure": [
+          "hero-single（图名 + 说明）",
+          "section: 图表主体（arch-visual / flow-visual / struct-visual / mermaid，默认使用可视化CSS方式）",
+          "section: 图例说明（table / callout-info / legend）",
+          "section: 相关代码（code-block, 可选）"
+        ],
+        "article_illustration_structure": [
+          "直接放置图表内容，无页面骨架包裹",
+          "可选：顶部标题（h2/h3，简洁）",
+          "图表主体（arch-visual / flow-visual / struct-visual / layer-stack / table / 自定义CSS布局）",
+          "可选：底部图例（legend / 简短说明）"
+        ]
+      }
+    },
+    "problem-diagnosis": {
+      "label": "问题定位",
+      "description": "强调现象、证据链、根因与修复动作",
+      "aliases": ["问题定位", "故障分析", "问题分析", "定位分析"],
+      "variants": ["证据优先型", "根因复盘型", "修复决策型"],
+      "template": {
+        "recommended_components": ["hero", "metric-row", "timeline", "code-block", "mermaid", "comparison", "callout"],
+        "page_structure": [
+          "hero-single（问题标题 + 关键结论 badge）",
+          "metric-row（影响范围、持续时长、修复耗时）",
+          "section: 现象描述（code-block 日志 + callout）",
+          "section: 排查过程（timeline）",
+          "section: 根因分析（mermaid 故障路径 + code-block 证据）",
+          "section: 修复方案（comparison 修复前后 + code-block）",
+          "section: 防范措施（steps）"
+        ]
+      }
+    },
+    "debug-process": {
+      "label": "调试过程",
+      "description": "强调时间线、关键试验、验证结果",
+      "aliases": ["调试过程", "排查过程", "debug", "调试记录"],
+      "variants": ["标准排查型", "里程碑记录型", "回退对比型"],
+      "template": {
+        "recommended_components": ["hero", "timeline", "code-block", "comparison", "callout", "metric-row"],
+        "page_structure": [
+          "hero-single（调试标题 + 最终结论）",
+          "section: 问题背景",
+          "section: 排查时间线（timeline + code-block 穿插）",
+          "section: 关键发现（callout-warning / code-block）",
+          "section: 验证结果（comparison + metric-row）",
+          "section: 结论与总结（callout-success）"
+        ]
+      }
+    },
+    "generic-summary": {
+      "label": "通用总结",
+      "description": "上下文较杂或未完全收敛时的默认总结",
+      "aliases": ["总结", "当前总结", "通用总结", "概要"],
+      "variants": ["默认总结型", "决策摘要型"],
+      "template": {
+        "recommended_components": ["hero", "metric-row", "table", "callout", "steps"],
+        "page_structure": [
+          "hero-single（标题 + 概要）",
+          "section: 核心要点（metric-row / bullet list）",
+          "section: 详细内容（table / timeline）",
+          "section: 下一步（steps / callout）"
+        ]
+      }
+    },
+    "presentation": {
+      "label": "PPT 演示",
+      "description": "全屏幻灯片模式，支持翻页、缩略图总览、全屏",
+      "aliases": ["PPT", "PPT风格", "PPT模式", "幻灯片", "翻页", "演示文稿", "slides", "presentation", "做成PPT", "PPT展示"],
+      "layout": "presentation-ppt",
+      "extra_assets": ["presentation.css", "presentation.js"],
+      "variants": ["技术分享型", "项目汇报型", "教程演示型", "方案评审型"],
+      "template": {
+        "recommended_components": ["slide-cover", "slide-divider", "slide-content", "slide-split", "slide-ending", "metric-row", "mermaid", "comparison"],
+        "page_structure": [
+          "slide-cover（标题 + 副标题 + 元信息）",
+          "slide-divider（每个大章节）",
+          "slide-content（正文，每页 5-7 要点）",
+          "slide-split（对比内容）",
+          "slide-ending（感谢 + 联系方式）"
+        ]
+      }
+    }
+  }
+}

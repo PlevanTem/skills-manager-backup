@@ -1,0 +1,30 @@
+{
+  "metric_name": "llm_rubric_response",
+  "threshold": 0.8,
+  "criterion": {
+    "llmJudge": {
+      "judge_model": {
+        "provider_name": "openai",
+        "model_name": "${MODEL:glm_flash}",
+        "base_url": "${MODEL:glm_flash}",
+        "api_key": "${MODEL:glm_flash}",
+        "generation_config": { "temperature": 0.0 }
+      },
+      "rubrics": [
+        {
+          "id": "accuracy",
+          "content": { "text": "回答是否准确、无事实错误" },
+          "description": "准确性",
+          "type": "FINAL_RESPONSE_QUALITY"
+        },
+        {
+          "id": "completeness",
+          "content": { "text": "回答是否覆盖了用户问题的关键点" },
+          "description": "完整性",
+          "type": "FINAL_RESPONSE_QUALITY"
+        }
+      ],
+      "models_aggregator": "all_pass"
+    }
+  }
+}

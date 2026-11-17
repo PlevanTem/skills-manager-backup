@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Tenchage-ppt 实时预览</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: #F4F5F7; margin: 0; padding: 24px; }
+header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+header h1 { color: #1A50D6; margin: 0; font-size: 22px; }
+header .badge { background: #00A45D; color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+.slide {
+  background: white; border: 1px solid #E5EBF5; border-radius: 8px; padding: 20px;
+  box-shadow: 0 2px 12px rgba(26, 80, 214, 0.06);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.slide:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(26, 80, 214, 0.12); }
+.slide-no { color: #86909C; font-size: 12px; }
+.slide-title { color: #1D2129; font-size: 18px; font-weight: bold; margin: 8px 0 4px; line-height: 1.4; }
+.slide-sub { color: #4E5969; font-size: 13px; margin-bottom: 8px; }
+.layout-tag { display: inline-block; background: #1A50D6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
+.deco { display: flex; gap: 4px; margin-bottom: 12px; }
+.deco-blue { width: 60px; height: 5px; background: #1A50D6; }
+.deco-green { width: 48px; height: 5px; background: #00A45D; }
+.notes { background: #EDF2FF; border-left: 3px solid #1A50D6; padding: 8px 12px; margin-top: 8px; font-size: 12px; color: #4E5969; border-radius: 4px; }
+.notes strong { color: #1A50D6; }
+pre { background: #F4F5F7; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; max-height: 200px; }
+.empty { color: #86909C; text-align: center; padding: 40px; }
+.toolbar { position: fixed; top: 16px; right: 16px; background: white; padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.1); font-size: 12px; }
+.toolbar .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00A45D; margin-right: 4px; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>📊 Tenchage-ppt 实时预览</h1>
+  <span class="badge">v3.0</span>
+  <span id="count" style="color:#86909C; font-size:13px;"></span>
+</header>
+<div class="toolbar"><span class="dot"></span>实时同步中</div>
+<div id="content" class="grid"><div class="empty">加载中...</div></div>
+<script>
+async function refresh() {
+  try {
+    const res = await fetch("/data.json?_=" + Date.now());
+    const data = await res.json();
+    const slides = data.slides || [];
+    const startPage = data.startPage || 1;
+    document.getElementById("count").textContent = `共 ${slides.length} 页`;
+    if (slides.length === 0) {
+      document.getElementById("content").innerHTML = '<div class="empty">📭 暂无幻灯片数据</div>';
+      return;
+    }
+    const html = slides.map((s, i) => {
+      const notes = s.speakerNotes ? `<div class="notes"><strong>📝 备注：</strong>${escapeHtml(s.speakerNotes.slice(0, 200))}${s.speakerNotes.length > 200 ? '...' : ''}</div>` : "";
+      return `
+        <div class="slide">
+          <div class="deco"><div class="deco-blue"></div><div class="deco-green"></div></div>
+          <div class="slide-no">第 ${startPage + i} 页<span class="layout-tag">${s.layout || "cards"}</span></div>
+          <div class="slide-title">${escapeHtml(s.mainTitle || "(未命名)")}</div>
+          ${s.subTitle ? `<div class="slide-sub">${escapeHtml(s.subTitle)}</div>` : ""}
+          ${notes}
+        </div>`;
+    }).join("");
+    document.getElementById("content").innerHTML = html;
+  } catch (e) {
+    document.getElementById("content").innerHTML = `<div class="empty" style="color:#C62828">⚠️ 加载失败：${e.message}</div>`;
+  }
+}
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+refresh();
+setInterval(refresh, 1500);
+</script>
+</body>
+</html>

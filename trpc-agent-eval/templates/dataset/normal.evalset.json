@@ -1,0 +1,23 @@
+{
+  "eval_set_id": "my_normal_set",
+  "name": "普通单轮评测集",
+  "description": "user + expected final_response + 预期工具调用，适合 final_response / tool_trajectory 等指标",
+  "eval_cases": [
+    {
+      "eval_id": "case_001",
+      "conversation": [
+        {
+          "invocation_id": "e-001",
+          "user_content": { "parts": [{ "text": "上海天气怎么样" }], "role": "user" },
+          "final_response": { "parts": [{ "text": "18°C" }], "role": "model" },
+          "intermediate_data": {
+            "tool_uses": [
+              { "id": "t1", "name": "get_weather", "args": { "city": "上海" } }
+            ]
+          }
+        }
+      ],
+      "session_input": { "app_name": "my_agent", "user_id": "user", "state": {} }
+    }
+  ]
+}

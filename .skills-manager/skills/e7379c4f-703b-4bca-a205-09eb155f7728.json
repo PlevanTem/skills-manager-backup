@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "e7379c4f-703b-4bca-a205-09eb155f7728",
+  "path": "lean-canvas",
+  "path_key": "lean-canvas",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "spans",
+  "record_selector": ["$.resource_spans[*]", "$.traces[*]", "$[*]", "$"],
+  "trace_id": ["$.trace_id", "$.context.trace_id", "$.attributes.trace_id"],
+  "session_id": ["$.attributes.session.id", "$.attributes.session_id", "$.attributes.gen_ai.conversation.id", "$.session.id", "$.session_id"],
+  "user_id": ["$.attributes.user.id", "$.attributes.user_id", "$.user.id", "$.user_id"],
+  "user_input": ["$.attributes.input.value", "$.attributes.gen_ai.input.messages", "$.input.value", "$.attributes.input"],
+  "final_response": ["$.attributes.output.value", "$.attributes.gen_ai.output.messages", "$.output.value", "$.attributes.output"],
+  "expected_final_response": ["$.attributes.expected.output", "$.expected.output", "$.expected_output", "$.reference.output"],
+  "tool_call_id": ["$.attributes.tool_call.id", "$.attributes.gen_ai.tool.call.id", "$.attributes.tool.id", "$.span_id"],
+  "tool_name": ["$.attributes.tool_call.name", "$.attributes.gen_ai.tool.call.name", "$.attributes.tool.name", "$.name"],
+  "tool_arguments": ["$.attributes.tool_call.arguments", "$.attributes.gen_ai.tool.call.arguments", "$.attributes.tool.parameters", "$.input.value", "$.attributes.input.value"],
+  "tool_result": ["$.attributes.tool_call.result", "$.attributes.gen_ai.tool.call.result", "$.attributes.tool.result", "$.output.value", "$.attributes.output.value"],
+  "spans": {
+    "path": "$.spans",
+    "agent_kinds": ["AGENT", "CHAIN"],
+    "tool_kinds": ["TOOL"]
+  }
+}

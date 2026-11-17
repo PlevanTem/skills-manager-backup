@@ -1,0 +1,248 @@
+/* ===== context-visualizer print.css =====
+   打印 + 导出模式 — @media print 适配 + 截图友好容器
+   ================================================= */
+
+/* ── 截图友好容器 ──
+   用 .cv-export-ready 包裹需要截图的区域，
+   强制白底、无圆角溢出、固定宽度 */
+.cv-export-ready {
+  background: #ffffff;
+  color: #162033;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+  box-shadow: none;
+}
+.cv-export-ready * {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+/* ── 通用打印模式 ── */
+@media print {
+  /* 基础重置 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html {
+    font-size: 12px;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #162033 !important;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: auto;
+  }
+
+  /* 隐藏交互元素 */
+  .cv-topbar,
+  .cv-toc-toggle,
+  .cv-toc-panel,
+  .cv-toc-overlay,
+  .cv-ppt-nav,
+  .cv-ppt-progress,
+  .cv-ppt-overview,
+  .cv-tab-nav,
+  .cv-collapse-trigger,
+  .cv-table-sort-icon,
+  .cv-ppt-fullscreen-btn {
+    display: none !important;
+  }
+
+  /* 页面布局 */
+  .cv-page {
+    max-width: none;
+    padding: 0 20px;
+    margin: 0;
+  }
+
+  /* 展开所有折叠 */
+  .cv-collapse-body {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* 显示所有 Tab 内容 */
+  .cv-tab-panel {
+    display: block !important;
+    opacity: 1 !important;
+    border-top: 1px solid #d7dfeb;
+    padding-top: 12px;
+    margin-top: 12px;
+  }
+  .cv-tab-panel::before {
+    content: attr(data-tab-label);
+    display: block;
+    font-weight: 800;
+    font-size: 11px;
+    color: #61738f;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  /* 卡片/面板去阴影 */
+  .cv-hero-card,
+  .cv-side-card,
+  .cv-section,
+  .cv-metric-card,
+  .cv-comparison-col,
+  .cv-table-wrap,
+  .cv-mermaid,
+  .cv-code-block {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  /* 避免元素跨页断裂 */
+  .cv-section,
+  .cv-metric-row,
+  .cv-comparison,
+  .cv-timeline-item,
+  .cv-code-block,
+  .cv-table-wrap,
+  .cv-mermaid,
+  .cv-callout,
+  .cv-steps .cv-step,
+  .cv-kanban,
+  .cv-gantt,
+  .cv-risk-matrix,
+  figure {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* 标题不与内容分离 */
+  h1, h2, h3, h4, h5, h6,
+  .cv-section-head,
+  .cv-slide-header {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* 链接显示 URL */
+  .cv-section-body a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 10px;
+    color: #61738f;
+    font-weight: 400;
+  }
+
+  /* 图表确保完整打印 */
+  .cv-mermaid {
+    overflow: visible !important;
+  }
+  .cv-mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* 代码块限制高度避免过长 */
+  .cv-code-block pre {
+    max-height: none;
+    overflow: visible;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* 进度条打印适配 */
+  .cv-progress-bar {
+    border: 1px solid #d7dfeb;
+  }
+  .cv-progress-fill {
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* 页脚打印信息 */
+  .cv-footer {
+    margin-top: 40px;
+    padding-top: 12px;
+    border-top: 1px solid #d7dfeb;
+  }
+
+  /* 看板/甘特图打印适配 */
+  .cv-kanban {
+    gap: 8px;
+  }
+  .cv-kanban-column {
+    border: 1px solid #d7dfeb;
+  }
+  .cv-gantt-bar {
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+/* ── PPT 打印模式（覆盖 presentation.css 中的基础打印） ── */
+@media print {
+  body.presentation-ppt {
+    overflow: visible;
+    height: auto;
+    width: auto;
+  }
+
+  body.presentation-ppt .cv-page {
+    height: auto;
+    width: auto;
+    overflow: visible;
+    position: static;
+  }
+
+  body.presentation-ppt .cv-slide {
+    position: relative !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    page-break-after: always;
+    height: 100vh;
+    width: 100%;
+    break-inside: avoid;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #d7dfeb;
+  }
+
+  body.presentation-ppt .cv-slide:last-child {
+    page-break-after: avoid;
+    border-bottom: none;
+  }
+
+  body.presentation-ppt .cv-slide-number {
+    display: block !important;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+/* ── 水印（可选，通过 .cv-watermark 启用） ── */
+.cv-watermark {
+  position: relative;
+}
+.cv-watermark::after {
+  content: attr(data-watermark);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 64px;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.03);
+  pointer-events: none;
+  z-index: 9999;
+  white-space: nowrap;
+  letter-spacing: 0.1em;
+}
+@media print {
+  .cv-watermark::after {
+    color: rgba(0, 0, 0, 0.05);
+  }
+}

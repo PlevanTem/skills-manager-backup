@@ -1,0 +1,33 @@
+{
+  "eval_set_id": "my_multiturn_set",
+  "name": "多轮对话评测集",
+  "description": "一个 case 多个 invocation 顺序执行；session_input.state 预置初始会话状态",
+  "eval_cases": [
+    {
+      "eval_id": "multiturn_001",
+      "conversation": [
+        {
+          "invocation_id": "turn-1",
+          "user_content": { "parts": [{ "text": "帮我查上海天气" }], "role": "user" },
+          "final_response": { "parts": [{ "text": "上海 18°C。" }], "role": "model" },
+          "intermediate_data": {
+            "tool_uses": [{ "id": "t1", "name": "get_weather", "args": { "city": "上海" } }]
+          }
+        },
+        {
+          "invocation_id": "turn-2",
+          "user_content": { "parts": [{ "text": "那北京呢" }], "role": "user" },
+          "final_response": { "parts": [{ "text": "北京 12°C。" }], "role": "model" },
+          "intermediate_data": {
+            "tool_uses": [{ "id": "t2", "name": "get_weather", "args": { "city": "北京" } }]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "my_agent",
+        "user_id": "user",
+        "state": { "preferred_unit": "celsius" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "5453f441-a50c-49af-a55c-fc102822ad02",
+  "path": "beachhead-segment",
+  "path_key": "beachhead-segment",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

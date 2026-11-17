@@ -1,0 +1,4 @@
+interface:
+  display_name: "Visualize With the Right Graph"
+  short_description: "Choose and verify charts for the reader task"
+  default_prompt: "Use $visualize-with-right-graph to turn this dataset and reader question into a usable visualization."

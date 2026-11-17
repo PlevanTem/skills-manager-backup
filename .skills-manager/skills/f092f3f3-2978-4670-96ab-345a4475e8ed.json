@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "f092f3f3-2978-4670-96ab-345a4475e8ed",
+  "path": "agent-product-patterns",
+  "path_key": "agent-product-patterns",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

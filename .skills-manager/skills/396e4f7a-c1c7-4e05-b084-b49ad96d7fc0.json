@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "396e4f7a-c1c7-4e05-b084-b49ad96d7fc0",
+  "path": "lark-apps",
+  "path_key": "lark-apps",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

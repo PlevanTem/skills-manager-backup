@@ -1,0 +1,491 @@
+/* ===== context-visualizer presentation.css =====
+   PPT 演示模式 — 全屏幻灯片翻页展示
+   当 body 同时包含 presentation-ppt class 时激活
+   ================================================= */
+
+/* ── 激活 PPT 模式时，重写整个页面布局 ── */
+body.presentation-ppt {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg);
+}
+
+/* 隐藏普通模式的 topbar 和 footer */
+body.presentation-ppt .cv-topbar,
+body.presentation-ppt .cv-footer {
+  display: none;
+}
+
+/* ── 幻灯片容器 ── */
+body.presentation-ppt .cv-page {
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── 单张幻灯片 ── */
+.cv-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 80px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: translateX(60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* 当前幻灯片 */
+.cv-slide.cv-slide-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  z-index: 2;
+}
+
+/* 已翻过的幻灯片 */
+.cv-slide.cv-slide-prev {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-60px);
+}
+
+/* ── 幻灯片内容区域 ── */
+.cv-slide-inner {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── 幻灯片类型：封面页 ── */
+.cv-slide-cover {
+  text-align: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 30% 70%, rgba(37, 99, 235, 0.08), transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(96, 165, 250, 0.06), transparent 50%),
+    var(--bg);
+}
+.cv-slide-cover .cv-slide-title {
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.cv-slide-cover .cv-slide-subtitle {
+  font-size: clamp(18px, 2.5vw, 28px);
+  color: var(--muted);
+  font-weight: 400;
+  margin-bottom: 32px;
+}
+.cv-slide-cover .cv-slide-meta {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.cv-slide-cover .cv-slide-meta .cv-chip {
+  font-size: 14px;
+  padding: 6px 16px;
+}
+
+/* ── 幻灯片类型：章节分隔页 ── */
+.cv-slide-divider {
+  text-align: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at center, rgba(37, 99, 235, 0.06), transparent 60%),
+    var(--bg);
+}
+.cv-slide-divider .cv-slide-section-num {
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--accent);
+  opacity: 0.3;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.cv-slide-divider .cv-slide-title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+.cv-slide-divider .cv-slide-subtitle {
+  font-size: 20px;
+  color: var(--muted);
+}
+
+/* ── 幻灯片类型：内容页 ── */
+.cv-slide-content {
+  justify-content: flex-start;
+  padding-top: 80px;
+}
+.cv-slide-content .cv-slide-header {
+  margin-bottom: 32px;
+  width: 100%;
+  max-width: 1100px;
+}
+.cv-slide-content .cv-slide-header h2 {
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+.cv-slide-content .cv-slide-header p {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* 内容页内的组件放大适配 */
+.cv-slide-content .cv-section {
+  box-shadow: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+.cv-slide-content .cv-section-head {
+  display: none; /* 标题由 slide-header 承担 */
+}
+.cv-slide-content .cv-section-body {
+  font-size: 18px;
+  line-height: 1.8;
+}
+.cv-slide-content .cv-section-body li {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.cv-slide-content .cv-metric-row {
+  margin: 24px 0;
+}
+.cv-slide-content .cv-metric-value {
+  font-size: clamp(36px, 5vw, 56px);
+}
+.cv-slide-content .cv-metric-label {
+  font-size: 15px;
+}
+.cv-slide-content .cv-code-block pre {
+  font-size: 15px;
+}
+.cv-slide-content .cv-table {
+  font-size: 16px;
+}
+.cv-slide-content .cv-table th,
+.cv-slide-content .cv-table td {
+  padding: 14px 18px;
+}
+.cv-slide-content .cv-callout {
+  font-size: 17px;
+  padding: 18px 22px;
+}
+.cv-slide-content .cv-mermaid {
+  box-shadow: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+/* ── 幻灯片类型：结尾页 ── */
+.cv-slide-ending {
+  text-align: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.06), transparent 60%),
+    var(--bg);
+}
+.cv-slide-ending .cv-slide-title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.cv-slide-ending .cv-slide-subtitle {
+  font-size: 20px;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+/* ── 两栏布局幻灯片 ── */
+.cv-slide-split {
+  justify-content: center;
+}
+.cv-slide-split .cv-slide-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  width: 100%;
+  max-width: 1100px;
+  align-items: start;
+}
+.cv-slide-split .cv-slide-col {
+  /* 自然流 */
+}
+
+/* ── PPT 导航控件 ── */
+.cv-ppt-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  transition: opacity 0.3s ease;
+}
+.cv-ppt-nav:hover {
+  opacity: 1 !important;
+}
+.cv-ppt-nav-left,
+.cv-ppt-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cv-ppt-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.cv-ppt-nav-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.cv-ppt-nav-btn:active {
+  transform: scale(0.95);
+}
+.cv-ppt-nav-btn[disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.cv-ppt-page-info {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 80px;
+  text-align: center;
+}
+.cv-ppt-page-info .cv-ppt-current {
+  color: var(--accent);
+  font-size: 18px;
+}
+
+/* 进度条 */
+.cv-ppt-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 101;
+  background: rgba(0, 0, 0, 0.05);
+}
+.cv-ppt-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+  border-radius: 0 2px 2px 0;
+}
+
+/* 幻灯片编号角标 */
+.cv-slide-number {
+  position: absolute;
+  bottom: 70px;
+  right: 40px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  opacity: 0.5;
+}
+
+/* 全屏按钮 */
+.cv-ppt-fullscreen-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+.cv-ppt-fullscreen-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 缩略图预览面板 */
+.cv-ppt-overview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: none;
+  padding: 40px;
+  overflow-y: auto;
+}
+.cv-ppt-overview.cv-ppt-overview-open {
+  display: block;
+}
+.cv-ppt-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.cv-ppt-overview-item {
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 2px solid transparent;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.cv-ppt-overview-item:hover {
+  border-color: var(--accent);
+  transform: scale(1.03);
+}
+.cv-ppt-overview-item.cv-ppt-overview-current {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+.cv-ppt-overview-label {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.cv-ppt-overview-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* ══════════════════════════════════════════════════
+   PPT Dark Theme 覆盖
+   ══════════════════════════════════════════════════ */
+body.theme-dark-screen.presentation-ppt .cv-ppt-nav {
+  background: rgba(11, 16, 32, 0.92);
+  border-top-color: rgba(148, 163, 184, 0.14);
+}
+body.theme-dark-screen.presentation-ppt .cv-ppt-nav-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(148, 163, 184, 0.14);
+  color: var(--text);
+}
+body.theme-dark-screen.presentation-ppt .cv-ppt-nav-btn:hover {
+  background: rgba(37, 99, 235, 0.2);
+  border-color: var(--accent);
+}
+body.theme-dark-screen.presentation-ppt .cv-ppt-fullscreen-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(148, 163, 184, 0.14);
+}
+body.theme-dark-screen.presentation-ppt .cv-ppt-progress {
+  background: rgba(255, 255, 255, 0.05);
+}
+body.theme-dark-screen.presentation-ppt .cv-ppt-overview {
+  background: rgba(0, 0, 0, 0.92);
+}
+body.theme-dark-screen.presentation-ppt .cv-ppt-overview-item {
+  background: var(--panel);
+}
+
+/* ══════════════════════════════════════════════════
+   PPT 响应式
+   ══════════════════════════════════════════════════ */
+@media (max-width: 920px) {
+  .cv-slide {
+    padding: 40px 32px;
+  }
+  .cv-slide-content {
+    padding-top: 60px;
+  }
+  .cv-slide-cover .cv-slide-title {
+    font-size: clamp(32px, 5vw, 48px);
+  }
+  .cv-slide-split .cv-slide-columns {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+@media (max-width: 560px) {
+  .cv-slide {
+    padding: 32px 20px;
+  }
+  .cv-ppt-nav {
+    padding: 8px 16px;
+  }
+  .cv-ppt-nav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+}
+
+/* PPT 打印模式已移至 print.css 统一管理 */
